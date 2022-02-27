@@ -27,7 +27,12 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.0
 #### 4.1 文件上传(指定文件名)
 
 ```code  
-
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+        TrackerServer: []string{"192.168.10.10:22122"},
+        MaxConns:      128,
+    }
     # 文件上传核心函数
     fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
     fileId, err := fdfsClient.UploadByFileName(curDir + fileName)
