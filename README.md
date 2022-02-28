@@ -1,9 +1,10 @@
-# fastdfs_client_go
+## fastdfs_client_go
 
 ### 1.概述
 
-- `FastDFS` 采用二进制 `TCP` 通信协议.
-- 开发本包的重点与核心主要是实现二进制通讯协议.
+- `FastDFS` 采用二进制 `TCP` 通信协议.  
+- 开发本包的重点与核心主要是实现二进制通讯协议.  
+- [点击了解 fastdfs 分布式文件存储系统](https://github.com/happyfish100/fastdfs) .
 
 ### 2.FastDFS二进制通讯协议细节
 
@@ -51,7 +52,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.1
     # 文件上传核心函数
     fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
     // 直接传递二进制上传文件，适合文件比较小的场景使用
-    fileId, err := fdfsClient.UploadByBuffer([]byte(strconv.Itoa(no+1)+" - 二进制直接上传"),
+    fileId, err := fdfsClient.UploadByBuffer([]byte("测试文本数据转为二进制直接上传"),
 
 ```
 
