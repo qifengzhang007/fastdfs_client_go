@@ -22,6 +22,8 @@ const (
 	STORAGE_PROTO_CMD_DELETE_FILE = 12
 	//  下载文件
 	STORAGE_PROTO_CMD_DOWNLOAD_FILE = 14
+	//  下载文件
+	STORAGE_PROTO_CMD_QUERY_FILE_INFO = 22
 
 	//  激活测试，通常用于检测连接是否有效
 	// 客户端使用连接池的情况下，建立连接后发送一次active test即可和server端保持长连接。
@@ -79,5 +81,7 @@ const (
 	ERROR_STORAGE_SERVER_DOWN_FILE_RECEIVE      = "storage server 下载的文件在读取数据过程中出错："
 	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH  = "storage server 下载的文件写出到硬盘出错："
 	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES = "storage server 上传文件在通过tcp连接发送二进制文件时出错："
+	ERROR_STORAGE_SERVER_GET_FILEINFO           = "storage server 查询文件信息时出错："
+	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度不符合长度为 40 字节的标准"
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 )
