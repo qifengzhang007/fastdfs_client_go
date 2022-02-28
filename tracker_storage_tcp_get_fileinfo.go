@@ -2,8 +2,7 @@ package fastdfs_client_go
 
 // GetRemoteFileInfo  获取远程服务器的文件信息
 // @remoteFileId 远程服务器的文件Id
-func (c *trackerServerTcpClient) GetRemoteFileInfo(remoteFileId string) (RemoteFileInfo, error) {
-	var remoteFileInfo RemoteFileInfo
+func (c *trackerServerTcpClient) GetRemoteFileInfo(remoteFileId string) (remoteFileInfo RemoteFileInfo, err error) {
 	groupName, remoteFilename, err := splitStorageServerFileId(remoteFileId)
 	if err != nil {
 		return remoteFileInfo, err
