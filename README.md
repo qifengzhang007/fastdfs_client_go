@@ -30,8 +30,9 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.1
 ```code  
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
-	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
         TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
         MaxConns:      128,
     }
     # 文件上传核心函数
@@ -45,8 +46,9 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.1
 ```code  
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
-	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
         TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
         MaxConns:      128,
     }
     # 文件上传核心函数
@@ -62,8 +64,9 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.1
 
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
-	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
         TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
         MaxConns:      128,
     }
     // 指定需要被下载的文件id （fileId）
@@ -81,8 +84,9 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.1
 ```code   
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
-	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
         TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
         MaxConns:      128,
     }
 	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
