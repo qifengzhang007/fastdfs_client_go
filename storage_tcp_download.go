@@ -11,7 +11,7 @@ import (
 
 type storageDownloadHeaderBody struct {
 	header
-	// body 参数，发送使用
+	// header  额外参数，发送使用
 	groupName      string
 	remoteFilename string
 	offset         int64

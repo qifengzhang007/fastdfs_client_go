@@ -8,6 +8,7 @@ import (
 // storageDeleteHeaderBody 文件删除
 type storageDeleteHeaderBody struct {
 	header
+	// header  额外参数，发送使用
 	groupName      string
 	remoteFilename string
 }

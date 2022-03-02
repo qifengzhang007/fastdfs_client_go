@@ -9,9 +9,10 @@ import (
 
 type storageServerUploadHeaderBody struct {
 	header
+	// header  额外参数，发送使用
 	fileInfo         *fileInfo
 	storagePathIndex byte
-	// 文件id (fileId) 接受使用
+	// 文件id (fileId) 响应信息
 	fileId string
 }
 
