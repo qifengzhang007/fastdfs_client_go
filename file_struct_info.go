@@ -14,6 +14,7 @@ type fileInfo struct {
 }
 
 // 通过文件名获取文件信息
+// @fileName 文件全路径名称
 func getFileInfoByFileName(fileName string) (*fileInfo, error) {
 	if fileName != "" {
 		file, err := os.OpenFile(fileName, os.O_RDONLY, 0755)

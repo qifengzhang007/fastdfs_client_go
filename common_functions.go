@@ -94,6 +94,7 @@ func sendBytesByFilePtr(filePtr *os.File, tcpConn net.Conn) (int64, error) {
 		} else {
 			alreadySendSize += int64(actualReadSize)
 			//fmt.Printf("tcp发送的数据: %#+v\n", oneReadBuf[:actualReadSize])
+			//fmt.Printf("上传进度：%d / %d , 百分比：%.2f%%\n",alreadySendSize,totalSize,100*float64(alreadySendSize)/float64(totalSize))
 			if _, tcpErr := tcpConn.Write(oneReadBuf[:actualReadSize]); tcpErr != nil {
 				return alreadySendSize, tcpErr
 			}
@@ -136,8 +137,8 @@ func writeBufferFromTcpConn(conn net.Conn, bufWriter *bufio.Writer, totalSize in
 		alreadyReceivedSize += int64(oneReadSize)
 		// 假设每次从 tcp 内核缓冲区读取的内容都是最大值 4096 字节，那么 1000 次大概是 4M 左右
 		// 每隔 4M 左右将内存缓冲区数据写入到底层的硬盘, 确保大文下载件时，内存占用始终处于低位
-		if i%1000 == 0 {
-			//fmt.Printf("每隔大约 4M 左右的数据，刷新到硬盘，已经接受的字节量：%d\n", alreadyReceivedSize)
+		if i >= 1000 && i%1000 == 0 {
+			//fmt.Printf("%d - 每隔大约 4M 左右的数据，刷新到硬盘，已经接受的字节量：%d\n", i,alreadyReceivedSize)
 			if err = bufWriter.Flush(); err != nil {
 				return errors.New(ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH + err.Error())
 			}
