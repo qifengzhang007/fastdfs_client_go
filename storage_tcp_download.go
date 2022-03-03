@@ -73,7 +73,7 @@ func (s *storageDownloadHeaderBody) Receive(tcpConn net.Conn) error {
 //receiveToFile 接受下载的数据流到指定的本地文件(设置文件名接受数据流)，注意：指定的文件名必须不能事先存在，避免对已经存在文件产生影响
 // @tcpConn  tcp连接
 func (s *storageDownloadHeaderBody) receiveToFile(tcpConn net.Conn) error {
-	file, err := os.OpenFile(s.saveFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND|os.O_EXCL, 0755)
+	file, err := os.OpenFile(s.saveFileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 	defer func() {
 		_ = file.Close()
 	}()
