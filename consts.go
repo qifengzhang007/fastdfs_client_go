@@ -37,9 +37,9 @@ const (
 	// tcp 连接超时时间
 	TCP_CONN_TIMEOUT = time.Second * 10
 	// tcp 连接最大空闲时间(秒)
-	TCP_CONN_IDLE_TIMEOUT float64 = 15
+	TCP_CONN_IDLE_TIMEOUT float64 = 10
 	// tcp  心跳的秒数
-	HEART_BEAT_SECOND = time.Second * 10
+	HEART_BEAT_SECOND = time.Second * 5
 
 	// 文件的扩展名长度常量
 	FILE_EXTNAME_FIX_LEN = 6

@@ -3,6 +3,7 @@ package fastdfs_client_go
 import (
 	"container/list"
 	"errors"
+	"fmt"
 	"net"
 	"strconv"
 	"sync"
@@ -81,6 +82,7 @@ func (t *tcpConnPool) Destroy() {
 
 // checkTcpConnPool 检测连接池中所有的 tcp 连接是否有效，把失效的tcp连接删除
 func (t *tcpConnPool) checkTcpConnPool() (err error) {
+	fmt.Println("心跳检测开始")
 	t.lock.Lock()
 	defer t.lock.Unlock()
 	var isOk bool
@@ -113,7 +115,7 @@ func (t *tcpConnPool) CheckSpecialTcpConnIsActive(tcpConn *tcpConnBaseInfo) (boo
 	}
 	err1 := tmpHeader.sendHeader(tcpConn)
 	err2 := tmpHeader.receiveHeader(tcpConn)
-
+	fmt.Printf("心跳检测过程数据输出：sendHeader-err：%#+v, receiveHeader-err:%#+v, 正在检测的当前tcp连接：%#+v\n", err1, err2, tcpConn)
 	if err1 == nil && err2 == nil && tmpHeader.status == 0 {
 		return true, nil
 	} else {
@@ -121,7 +123,15 @@ func (t *tcpConnPool) CheckSpecialTcpConnIsActive(tcpConn *tcpConnBaseInfo) (boo
 			err3 := ERROR_TCP_SERVER_RESPONSE_NOT_ZERO
 			return false, errors.New(err1.Error() + err2.Error() + err3)
 		}
-		return false, errors.New(err1.Error() + err2.Error())
+		// 这里的错误可能发生在发生时、接受时其中一个或者两处全部都出错
+		var tempErr string
+		if err1 != nil {
+			tempErr = err1.Error()
+		}
+		if err2 != nil {
+			tempErr += err2.Error()
+		}
+		return false, errors.New(tempErr)
 	}
 }
 
