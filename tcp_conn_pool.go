@@ -121,7 +121,15 @@ func (t *tcpConnPool) CheckSpecialTcpConnIsActive(tcpConn *tcpConnBaseInfo) (boo
 			err3 := ERROR_TCP_SERVER_RESPONSE_NOT_ZERO
 			return false, errors.New(err1.Error() + err2.Error() + err3)
 		}
-		return false, errors.New(err1.Error() + err2.Error())
+		// 这里的错误可能发生在发送时、接受时，其中一个或者两处全部都出错
+		var tempErr string
+		if err1 != nil {
+			tempErr = err1.Error()
+		}
+		if err2 != nil {
+			tempErr += err2.Error()
+		}
+		return false, errors.New(tempErr)
 	}
 }
 
