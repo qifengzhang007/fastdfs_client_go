@@ -84,6 +84,7 @@ func sendBytesByFilePtr(filePtr *os.File, tcpConn net.Conn) (int64, error) {
 	var remainSize int64 = 1
 	var actualReadSize = 0
 	var alreadySendSize int64 = 0
+	_ = tcpConn.SetWriteDeadline(time.Time{})
 	for ; remainSize > 0; remainSize = totalSize - alreadySendSize {
 		if actualReadSize, err = filePtr.Read(oneReadBuf); err != nil {
 			if err == io.EOF {
