@@ -15,7 +15,7 @@
 ```code 
 // 请在本仓库的 gitTag 中查看最新版本,永远建议大家使用最新版本.  
 // 查看地址：https://github.com/qifengzhang007/fastdfs_client_go/tags
-go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.3
+go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.4
 
 ```
 
