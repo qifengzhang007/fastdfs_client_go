@@ -80,7 +80,7 @@ func sendBytesByFilePtr(filePtr *os.File, tcpConn net.Conn) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	_ = tcpConn.SetReadDeadline(time.Time{})
+	_ = tcpConn.SetWriteDeadline(time.Time{})
 	totalSize := fInfo.Size()
 	var oneReadBuf = make([]byte, TCP_READ_BUFFER_SIZE)
 	var remainSize int64 = 1

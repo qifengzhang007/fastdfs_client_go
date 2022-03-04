@@ -19,8 +19,9 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 //var curDir = "E:/Project/2020/fastdfs_client_go/"
 //var fileName = "1024.txt"
 
-var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
-var fileName = "mysql-8.0.18.tar.gz" // 9M 左右
+//var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
+var curDir = "E:/音乐资源/"
+var fileName = "音阙诗听&赵方婧 - 芒种.flac" // 9M 左右
 
 // 通过文件名上传文件
 func TestUploadByFileName(t *testing.T) {
@@ -91,7 +92,7 @@ func TestDeleteFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 删除文件
-	fileId := "group1/M00/00/01/MeiRdmISSbuAZwwSAAAAD_Q4O2U879.txt"
+	fileId := "group1/M00/00/01/MeiRdmIiJFSAc-9LAVAgPVlxT6k09.flac"
 	if err = fdfsClient.DeleteFile(fileId); err != nil {
 		t.Error("单元测试失败，删除文件出错：" + err.Error())
 	} else {
