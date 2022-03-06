@@ -95,3 +95,20 @@ func TestDeleteFile(t *testing.T) {
 		t.Log("删除文件 - 单元测试成功!")
 	}
 }
+
+// 查询远程文件信息
+func TestQueryRemoteFileInfo(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+	// 通过指定 文件id(fileId) 删除文件
+	fileId := "group1/M00/00/01/MeiRdmIbNnqAMnUuAAAAGej0Rfc623.txt"
+	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
+		t.Error("单元测试失败，删除文件出错：" + err.Error())
+	} else {
+		t.Logf("远程文件查询结果：%#+v\n", remoteFileInfo)
+	}
+}
