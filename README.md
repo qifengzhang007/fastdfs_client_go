@@ -97,6 +97,24 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.4
 	 
 ```
 
+#### 4.5 获取远程文件信息
+
+```code   
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+        TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+        MaxConns:      128,
+    }
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	// 指定需要查询的远程文件Id
+	fileId := "group1/M00/00/01/MeiRdmISSbuAZwwSAAAAD_Q4O2U879.txt"
+	// 查询远程文件信息，返回一个包含文件信息的结构体
+	 remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId)
+	 
+```
+
 ####  以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)  
 
 
