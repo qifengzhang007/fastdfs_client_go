@@ -12,7 +12,7 @@ const (
 	TCP_HEADER_LEN = 10
 	//tracker 响应码
 	TRACKER_PROTO_CMD_RESP = 100
-	//获取一个storage server用来存储文件（指定组名
+	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
 	// 获取一个 storage server 用来下载文件
 	TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE = 102
@@ -22,7 +22,7 @@ const (
 	STORAGE_PROTO_CMD_DELETE_FILE = 12
 	//  下载文件
 	STORAGE_PROTO_CMD_DOWNLOAD_FILE = 14
-	//  下载文件
+	//  获取文件信息
 	STORAGE_PROTO_CMD_QUERY_FILE_INFO = 22
 
 	//  激活测试，通常用于检测连接是否有效
@@ -82,6 +82,6 @@ const (
 	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH  = "storage server 下载的文件写出到硬盘出错："
 	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES = "storage server 上传文件, 通过tcp连接发送二进制文件时出错："
 	ERROR_STORAGE_SERVER_GET_FILEINFO           = "storage server 查询文件信息时出错："
-	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度不符合长度为 40 字节的标准"
+	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度必须 ≥ 40 字节的标准"
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 )

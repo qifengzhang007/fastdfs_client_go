@@ -4,7 +4,8 @@
 本篇文档在编写过程中遇到了几个的错误，主要是因为作者在 2009年 和 2019年 分别发布了两份协议参数，但是两份协议参数不尽相同，有些协议的对接反而是旧版本成功了，而按照新版本的协议参数对接却始终失败.   
 参考地址(作者2009年发布)：`    http://bbs.chinaunix.net/thread-2001015-1-1.html   `    
 参考地址(作者2019年发布)：`    https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ   `      
-本篇文档是综合了以上两份协议参数编写而成，有时候按照新版本协议对接失败，请切换为旧版本参数对接调试即可 .    
+参考地址(作者2025年发布)：`    https://blog.csdn.net/happy_fish100/article/details/152223097   `
+本篇文档是综合了以上两份协议参数编写而成，有时候按照新版本协议对接失败，请切换为旧版本参数对接调试即可 .
 
 ### 2.header 和 body 组成
 
@@ -19,7 +20,7 @@ FastDFS 采用二进制 TCP 通信协议。一个数据包由 包头（header）
     @ status：1字节整数，状态码，0表示成功，非0失败（UNIX错误码）
     
 ```
-发送header 头参数核心函数   
+发送 header 头参数核心函数   
 
 ```code   
 //sendHeader  发送header消息
@@ -232,24 +233,24 @@ func (h *header) sendHeader(conn net.Conn) error {
 | tracker 正确响应码         | TRACKER_PROTO_CMD_RESP                                  | 100 |
 | storage 正确响应码         | STORAGE_PROTO_CMD_RESP                                  | 100 |
 | 激活测试,通常用于检测连接是否有效     | FDFS_PROTO_CMD_ACTIVE_TEST                              | 111 |
-| 待补充                   | TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP                 | 90  |
 | 获取组列表                 | TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS                | 91  |
 | 不需要组名获取一个存储节点         | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE | 101 |
 | 获取下载节点QUERY_FETCH_ONE | TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE               | 102 |
 | 获取更新节点QUERY_UPDATE    | TRACKER_PROTO_CMD_SERVICE_QUERY_UPDATE                  | 103 |
 | 按组获取存储节点              | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ONE    | 104 |
-| 待补充                   | TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ALL               | 105 |
-| 待补充                   | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ALL | 106 |
-| 待补充                   | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ALL    | 10  |
-| 文件上传                  | STORAGE_PROTO_CMD_UPLOAD_FILE                           | 11  |
-| 删除文件                  | STORAGE_PROTO_CMD_DELETE_FILE                           | 12  |
-| 设置文件元数据               | STORAGE_PROTO_CMD_SET_METADATA                          | 13  |
-| 文件下载                  | STORAGE_PROTO_CMD_DOWNLOAD_FILE                         | 14  |
-| 获取文件元数据               | STORAGE_PROTO_CMD_GET_METADATA                          | 15  |
-| 上传附属文件                | STORAGE_PROTO_CMD_UPLOAD_SLAVE_FILE                     | 21  |
 | 查询文件信息                | STORAGE_PROTO_CMD_QUERY_FILE_INFO                       | 22  |
-| 创建支持断点续传的文件           | STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE                  | 23  |
 | 断点续传                  | STORAGE_PROTO_CMD_APPEND_FILE                           | 24  |
+| 文件上传                  | STORAGE_PROTO_CMD_UPLOAD_FILE                           | 11  |
+| 文件下载                  | STORAGE_PROTO_CMD_DOWNLOAD_FILE                         | 14  |
+| 删除文件                  | STORAGE_PROTO_CMD_DELETE_FILE                           | 12  |
+| 上传附属文件                | STORAGE_PROTO_CMD_UPLOAD_SLAVE_FILE                     | 21  |
+| 设置文件元数据               | STORAGE_PROTO_CMD_SET_METADATA                          | 13  |
+| 获取文件元数据               | STORAGE_PROTO_CMD_GET_METADATA                          | 15  |
+| 创建支持断点续传的文件           | STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE                  | 23  |
 | 文件修改                  | STORAGE_PROTO_CMD_MODIFY_FILE                           | 34  |
 | 清除文件                  | STORAGE_PROTO_CMD_TRUNCATE_FILE                         | 36  |
-| 待补充                   | STORAGE_PROTO_CMD_REGENERATE_APPENDER_FILENAME          | 38  |
+| appender类型文件改名为普通文件                   | STORAGE_PROTO_CMD_REGENERATE_APPENDER_FILENAME          | 38  |
+| 查看一个group状态                   | TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP                 | 90  |
+| 获取storage server列表用来下载文件                   | TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ALL               | 105 |
+| 获取storage server列表用来存储文件（不指定组名）                   | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ALL | 106 |
+| 获取storage server列表用来存储文件（指定组名）                   | TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ALL    | 10  |

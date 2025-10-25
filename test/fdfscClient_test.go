@@ -10,7 +10,11 @@ import (
 
 var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
-	TrackerServer: []string{"49.232.145.118:22122"},
+	// 1.配置 trackerServer 地址，端口默认为：22122
+	// 2. trackerServer 服务器会返回storage_server 服务器地址： xx.xx.xx.xx: 23000，
+	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
+	// 4.上线部署以后，请使用内网ip、端口，保证安全
+	TrackerServer: []string{"192.168.0.11:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
 	MaxConns: 128,
 }
@@ -19,9 +23,9 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 //var curDir = "E:/Project/2020/fastdfs_client_go/"
 //var fileName = "1024.txt"
 
-//var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
-var curDir = "E:/音乐资源/"
-var fileName = "音阙诗听&赵方婧 - 芒种.flac" // 9M 左右
+// var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
+var curDir = "E:/音乐资源/刀郎-山歌寥哉 2023/"
+var fileName = "01. 序曲.wav" // 9M 左右
 
 // 通过文件名上传文件
 func TestUploadByFileName(t *testing.T) {
@@ -92,7 +96,7 @@ func TestDeleteFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 删除文件
-	fileId := "group1/M00/00/01/MeiRdmIiJFSAc-9LAVAgPVlxT6k09.flac"
+	fileId := "group1/M00/00/00/wKgAP2j5qPqAPWWVAAAAGzF0Auc932.txt"
 	if err = fdfsClient.DeleteFile(fileId); err != nil {
 		t.Error("单元测试失败，删除文件出错：" + err.Error())
 	} else {
@@ -108,10 +112,10 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 		return
 	}
 	defer fdfsClient.Destroy()
-	// 通过指定 文件id(fileId) 删除文件
-	fileId := "group1/M00/00/00/MeiRdmIOFHuAWrOVAAdps6fU_X8506.png"
+	// 通过指定 文件id(fileId) 查询远程文件信息
+	fileId := "group1/M00/00/00/cnQ3KGj87cOALph5AvUE-M1tsmY467.wav"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
-		t.Error("单元测试失败，删除文件出错：" + err.Error())
+		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {
 		t.Logf("远程文件查询结果：%#+v\n", remoteFileInfo)
 	}

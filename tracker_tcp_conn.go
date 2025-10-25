@@ -15,7 +15,7 @@ import (
 // 本页面的代码主要功能：
 // 1.与 trackerServer 实现网络通讯
 
-//  trackerTcpConn trackerServer的tcp连接信息
+// trackerTcpConn trackerServer的tcp连接信息
 type trackerTcpConn struct {
 	// send 参数 ↓
 	header
@@ -25,7 +25,7 @@ type trackerTcpConn struct {
 	storageInfo storageInfo
 }
 
-//  trackerStorageInfo 通过 trackerServer 获取的 storageServer 信息
+// trackerStorageInfo 通过 trackerServer 获取的 storageServer 信息
 type storageInfo struct {
 	ipAddr         string
 	port           int64
@@ -72,13 +72,19 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	//@ip_addr：15字节字符串， storage server IP地址
 	//@port：8字节整数，storage server端口号
 	//@store_path_index：1字节整数，基于0的存储路径顺序号
+	var ipV6Offset = 30 // fastdfs v6.11 以后的版本支持到IP v6，所以IP地址的长度为15字节 + 新偏移30字节
+	// 40 长度字节为老版本的协议标准，> 40字节长度以后的版本为新的协议标准
+	if len(buf) < 40 {
+		ipV6Offset = 0
+	}
+	//fmt.Println("字节长度：", len(buf), buf)
 	t.groupName = string(getBytesByPosition(buf, 0, 15))
-	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15))
-	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31, 8))
+	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
+	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 	switch t.header.cmd {
 	// 后面的参数需要根据具体的命令去设置
 	case STORAGE_PROTO_CMD_UPLOAD_FILE:
-		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39, 1)[0]
+		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39+ipV6Offset, 1)[0]
 	default:
 		//
 	}
