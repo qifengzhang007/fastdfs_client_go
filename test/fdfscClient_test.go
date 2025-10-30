@@ -1,11 +1,12 @@
 package test
 
 import (
-	"github.com/qifengzhang007/fastdfs_client_go"
 	"strconv"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/qifengzhang007/fastdfs_client_go"
 )
 
 var conf = &fastdfs_client_go.TrackerStorageServerConfig{
@@ -14,7 +15,7 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 2. trackerServer 服务器会返回storage_server 服务器地址： xx.xx.xx.xx: 23000，
 	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
-	TrackerServer: []string{"192.168.0.11:22122"},
+	TrackerServer: []string{"114.116.55.40:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
 	MaxConns: 128,
 }
@@ -24,8 +25,8 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 //var fileName = "1024.txt"
 
 // var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
-var curDir = "E:/音乐资源/刀郎-山歌寥哉 2023/"
-var fileName = "01. 序曲.wav" // 9M 左右
+var curDir = "F:/tmp/"
+var fileName = "test-001.mp4" // 9M 左右
 
 // 通过文件名上传文件
 func TestUploadByFileName(t *testing.T) {
@@ -113,7 +114,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "group1/M00/00/00/cnQ3KGj87cOALph5AvUE-M1tsmY467.wav"
+	fileId := "/group1/M00/00/00/cnQ3KGkC1e6ATl_bANze3qa2RIk4790.mp4"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {

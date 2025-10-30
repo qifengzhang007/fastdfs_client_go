@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"net"
+	"strconv"
 )
 
 // 本页面代码功能介绍：
@@ -12,16 +13,17 @@ import (
 // 如果 body 参数为空，那么可以直接使用 header 结构体以及提供的方法进行网络通讯
 
 // header(包头) 组成结构：
-//  pkg_len：8字节整数，body长度，不包含header，只是body的长度
-//  cmd：   1字节整数，命令码
-//  status：1字节整数，状态码，0表示成功，非0失败（UNIX错误码）
+//
+//	pkg_len：8字节整数，body长度，不包含header，只是body的长度
+//	cmd：   1字节整数，命令码
+//	status：1字节整数，状态码，0表示成功，非0失败（UNIX错误码）
 type header struct {
 	pkgLen int64 // 占8字节
 	cmd    byte  // 占1字节
 	status byte  // 占1字节
 }
 
-//sendHeader  发送header消息
+// sendHeader  发送header消息
 // @tcpConn tcp连接
 func (h *header) sendHeader(tcpConn net.Conn) error {
 	buffer := new(bytes.Buffer)
@@ -39,7 +41,7 @@ func (h *header) sendHeader(tcpConn net.Conn) error {
 	return nil
 }
 
-//receiveHeader  接受 header 头
+// receiveHeader  接受 header 头
 // @tcpConn tcp连接
 func (h *header) receiveHeader(tcpConn net.Conn) error {
 	buf := make([]byte, TCP_HEADER_LEN)
@@ -47,14 +49,14 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 		return err
 	}
 	buffer := bytes.NewBuffer(buf)
-	// 读取已接受字节的实际长度，赋值给 pkgLen，pkgLen 按照协议长度必须=10
-	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil || h.pkgLen != TCP_HEADER_LEN {
+	// 读取已接受字节的实际长度，赋值给 pkgLen 表示 body 长度
+	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil {
 		return err
 	} else {
 		h.cmd = (buf[8:9])[0]
 		h.status = (buf[9:10])[0]
 		if h.status != 0 {
-			return errors.New(ERROR_HEADER_RECEV_STATUS_NOT_ZERO + ", ErrorMsg: " + string(h.status))
+			return errors.New(ERROR_HEADER_RECEV_STATUS_NOT_ZERO + ", status: " + strconv.Itoa(int(h.status)))
 		}
 	}
 	return nil
