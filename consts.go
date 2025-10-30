@@ -82,6 +82,6 @@ const (
 	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH  = "storage server 下载的文件写出到硬盘出错："
 	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES = "storage server 上传文件, 通过tcp连接发送二进制文件时出错："
 	ERROR_STORAGE_SERVER_GET_FILEINFO           = "storage server 查询文件信息时出错："
-	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度必须 ≥ 40 字节的标准"
+	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度小于标准值40字节, 该文件可能不存在."
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 )
