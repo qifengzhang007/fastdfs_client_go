@@ -27,8 +27,8 @@ type header struct {
 // @tcpConn tcp连接
 func (h *header) sendHeader(tcpConn net.Conn) error {
 	buffer := new(bytes.Buffer)
-	// c.pkgLen 整数型（4字节或者8字节）写入到二进制缓冲区
-	//将整数类型采用网络字节序（Big-Endian），包括4字节整数(int32)和8字节整数(int64)
+	// c.pkgLen 整数型（8字节）写入到二进制缓冲区
+	//将整数类型采用网络字节序（Big-Endian），8字节整数(int64)
 	if err := binary.Write(buffer, binary.BigEndian, h.pkgLen); err != nil {
 		return err
 	}
@@ -49,15 +49,17 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 		return err
 	}
 	buffer := bytes.NewBuffer(buf)
-	// 读取已接受字节的实际长度，赋值给 pkgLen 表示 body 长度
+	// 读取已接受字节的实际值，赋值给 pkgLen ，pkgLen 本身占8字节，只能存储前8字节的值，实际上读取的这个值 = 就是 body 的长度
 	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil {
 		return err
-	} else {
+	} else if h.pkgLen == 0 {
 		h.cmd = (buf[8:9])[0]
 		h.status = (buf[9:10])[0]
 		if h.status != 0 {
 			return errors.New(ERROR_HEADER_RECEV_STATUS_NOT_ZERO + ", status: " + strconv.Itoa(int(h.status)))
 		}
+	} else {
+
 	}
 	return nil
 }
