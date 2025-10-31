@@ -50,16 +50,14 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 	}
 	buffer := bytes.NewBuffer(buf)
 	// 读取已接受字节的实际值，赋值给 pkgLen ，pkgLen 本身占8字节，只能存储前8字节的值，实际上读取的这个值 = 就是 body 的长度
-	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil {
+	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil || h.pkgLen != TCP_HEADER_LEN {
 		return err
-	} else if h.pkgLen == 0 {
+	} else {
 		h.cmd = (buf[8:9])[0]
 		h.status = (buf[9:10])[0]
 		if h.status != 0 {
 			return errors.New(ERROR_HEADER_RECEV_STATUS_NOT_ZERO + ", status: " + strconv.Itoa(int(h.status)))
 		}
-	} else {
-
 	}
 	return nil
 }
