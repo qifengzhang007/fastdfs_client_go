@@ -3,9 +3,7 @@ package fastdfs_client_go
 import (
 	"bytes"
 	"encoding/binary"
-	"errors"
 	"net"
-	"strconv"
 )
 
 // 本页面代码功能介绍：
@@ -49,15 +47,16 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 		return err
 	}
 	buffer := bytes.NewBuffer(buf)
-	// 读取已接受字节的实际值，赋值给 pkgLen ，pkgLen 本身占8字节，只能存储前8字节的值，实际上读取的这个值 = 就是 body 的长度
-	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil || h.pkgLen != TCP_HEADER_LEN {
+	// buffer 存储的是缓冲区读取的10个字节数据
+	// h.pkgLen int64 只读取前8字节，刚好 = body 的长度
+	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil {
 		return err
 	} else {
+		//fmt.Println("header-pkgLen 接收数据：", h.pkgLen)
+		//fmt.Println("header-cmd 接收数据：", int(h.cmd))
+		//fmt.Println("header-status 接收数据：", int(h.status))
 		h.cmd = (buf[8:9])[0]
 		h.status = (buf[9:10])[0]
-		if h.status != 0 {
-			return errors.New(ERROR_HEADER_RECEV_STATUS_NOT_ZERO + ", status: " + strconv.Itoa(int(h.status)))
-		}
 	}
 	return nil
 }

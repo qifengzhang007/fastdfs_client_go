@@ -2,11 +2,10 @@ package fastdfs_client_go
 
 import (
 	"errors"
-	"fmt"
 	"time"
 )
 
-//DownloadFileByFileId 通过文件id下载文件
+// DownloadFileByFileId 通过文件id下载文件
 // @fileId 文件id，格式：group1/M00/00/01/MeiRdmISSSqASUsRAJA3gI2KXVQ867.mp3
 // @saveFileName 指定下载后保存的名称
 // @offset 偏移字节数量
@@ -29,17 +28,17 @@ func (c *trackerServerTcpClient) DownloadFileByFileId(fileId, saveFileName strin
 		if i >= 2 && err != nil {
 			if tmpFileInfo, err = getFileInfoByFileName(saveFileName); err == nil {
 				offset := tmpFileInfo.fileSize
-				fmt.Printf("下载出错了，开始重新偏移下载，偏移量：%d\n", offset)
+				//fmt.Printf("下载出错了，开始重新偏移下载，偏移量：%d\n", offset)
 				tmpFileInfo.Close()
 				if err = c.startDownFiles(groupName, remoteFilename, saveFileName, offset); err != nil {
 					time.Sleep(time.Second * 5)
 				}
 			}
 		} else if i == 1 {
-			fmt.Println("首次开始下载任务")
+			//fmt.Println("首次开始下载任务")
 			err = c.startDownFiles(groupName, remoteFilename, saveFileName, 0)
 		} else {
-			fmt.Println("解除下载中出现的错误...断点续传（下载）完成！")
+			//fmt.Println("解除下载中出现的错误...断点续传（下载）完成！")
 			break
 		}
 	}

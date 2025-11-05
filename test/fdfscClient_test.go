@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/qifengzhang007/fastdfs_client_go"
 )
@@ -15,9 +14,9 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 2. trackerServer 服务器会返回storage_server 服务器地址： xx.xx.xx.xx: 23000，
 	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
-	TrackerServer: []string{"114.116.55.40:22122"},
+	TrackerServer: []string{"192.168.10.10:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
-	MaxConns: 128,
+	MaxConns: 4,
 }
 
 // 设置测试文件的根目录，测试使用
@@ -77,15 +76,13 @@ func TestDownLoadFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id 下载文件
-	fileId := "group1/M00/00/01/MeiRdmIbNaKATp-GAJA3gI2KXVQ428.mp3"
+	fileId := "group1/M00/00/00/cnQ3KGkK8oeASpt-ANze3qa2RIk466.mp4"
 	//fileId := "group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav" // 大小 9451392
-	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"音乐001.mp3"); err != nil {
+	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-001.mp4"); err != nil {
 		t.Error("下载文件单元测试出错, ERROR:" + err.Error())
 	} else {
 		t.Log("下载文件单元测试成功 !")
 	}
-
-	time.Sleep(time.Minute * 5)
 }
 
 // 删除文件
@@ -97,7 +94,7 @@ func TestDeleteFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 删除文件
-	fileId := "group1/M00/00/00/wKgAP2j5qPqAPWWVAAAAGzF0Auc932.txt"
+	fileId := "group1/M00/00/00/cnQ3KGkC1e6ATl_bANze3qa2RIk479.mp4"
 	if err = fdfsClient.DeleteFile(fileId); err != nil {
 		t.Error("单元测试失败，删除文件出错：" + err.Error())
 	} else {
@@ -114,7 +111,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "/group1/M00/00/00/cnQ3KGkC1e6ATl_bANze3qa2RIk4790.mp4"
+	fileId := "/group1/M00/00/00/cnQ3KGkK8VOAUivAANze3qa2RIk174.mp4"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {

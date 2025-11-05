@@ -72,7 +72,7 @@ const (
 	ERROR_CONN_POOL_NO_ACTIVE_CONN              = "tcp 连接池中没有有效对象"
 	ERROR_HEADER_RECEV_STATUS_NOT_ZERO          = "收到的消息头（receive header）中 status 值不为0"
 	ERROR_HEADER_RECEV_ERROR                    = "收到的消息头（receive header）中有错误"
-	ERROR_HEADER_RECEV_LEN_LT16_ERROR           = "收到的消息头（receive header）长度必须 > 16"
+	ERROR_HEADER_RECEV_LEN_LT16_ERROR           = "接收上传结果出错，没有收到完整的响应，body长度必须 >= 16"
 	ERROR_STORAGE_SERVER_FILE_NAME_FORMAT2      = "storage server 文件名格式不正确,  文件Id(fileId) 中必须至少存在一个斜杠( /)，不能不能在开头位置"
 	ERROR_STORAGE_SERVER_DOWN_HEADER            = "storage server 下载时获取服务器响应头出错: "
 	ERROR_STORAGE_SERVER_DOWN_IS_EMPTY          = "storage server 被下载的文件在服务器端不存在(或文件内容为空)"
@@ -82,6 +82,7 @@ const (
 	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH  = "storage server 下载的文件写出到硬盘出错："
 	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES = "storage server 上传文件, 通过tcp连接发送二进制文件时出错："
 	ERROR_STORAGE_SERVER_GET_FILEINFO           = "storage server 查询文件信息时出错："
-	ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN  = "storage server 查询文件信息时获取响应 body 长度小于标准值40字节, 该文件可能不存在."
+	ERROR_STORAGE_SERVER_FILE_NOT_FOUND         = "storage server 查询文件信息时获取响应状态码非0(status={status}), 该文件可能不存在."
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
+	ERROR_DELETE_FILE_NOT_FOUNDZE               = "删除文件失败，被删除的文件可能不存在"
 )

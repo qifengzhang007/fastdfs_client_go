@@ -2,6 +2,7 @@ package fastdfs_client_go
 
 import (
 	"bytes"
+	"errors"
 	"net"
 )
 
@@ -13,7 +14,7 @@ type storageDeleteHeaderBody struct {
 	remoteFilename string
 }
 
-//Send 发送删除文件命令
+// Send 发送删除文件命令
 // @tcpConn tcp连接
 func (s *storageDeleteHeaderBody) Send(tcpConn net.Conn) error {
 	// 设置删除文件时的 header 参数
@@ -39,5 +40,10 @@ func (s *storageDeleteHeaderBody) Send(tcpConn net.Conn) error {
 // Receive  接受删除命令发送服务端的响应头
 // @tcpConn tcp连接
 func (s *storageDeleteHeaderBody) Receive(tcpConn net.Conn) error {
-	return s.header.receiveHeader(tcpConn)
+	if err := s.header.receiveHeader(tcpConn); err != nil {
+		if int(s.header.status) != 0 {
+			return errors.New(ERROR_DELETE_FILE_NOT_FOUNDZE)
+		}
+	}
+	return nil
 }

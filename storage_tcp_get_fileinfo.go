@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"net"
+	"strconv"
+	"strings"
 )
 
 type storageGetFileInfoHeaderBody struct {
@@ -52,8 +54,8 @@ func (s *storageGetFileInfoHeaderBody) Receive(tcpConn net.Conn) error {
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return errors.New(ERROR_STORAGE_SERVER_GET_FILEINFO + err.Error())
 	}
-	if s.header.pkgLen < 40 {
-		return errors.New(ERROR_STORAGE_SERVER_GET_FILEINFO_BODY_LEN)
+	if int(s.header.status) != 0 {
+		return errors.New(strings.Replace(ERROR_STORAGE_SERVER_FILE_NOT_FOUND, "{status}", strconv.Itoa(int(s.header.status)), 1))
 	}
 	buf := make([]byte, 40)
 	if _, err := tcpConn.Read(buf); err != nil {
