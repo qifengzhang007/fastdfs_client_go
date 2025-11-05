@@ -37,7 +37,10 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.6
     }
     # 文件上传核心函数
     fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+    // curDir + fileName  = 被上传文件的路径，例如：/home/dmmo/test-001.mp4
     fileId, err := fdfsClient.UploadByFileName(curDir + fileName)
+    // 返回的 fileId 格式：
+    // group1/M00/00/00/cnQ3KGkK8BOAUqfCANze3qa2RIk584.mp4
 
 ```
 
