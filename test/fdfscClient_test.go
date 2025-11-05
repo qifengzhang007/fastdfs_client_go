@@ -16,7 +16,7 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
 	TrackerServer: []string{"192.168.10.10:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
-	MaxConns: 4,
+	MaxConns: 128,
 }
 
 // 设置测试文件的根目录，测试使用
