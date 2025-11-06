@@ -2,11 +2,15 @@
 
 > 在线地址：https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ
 
-FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和包体（body）组成。包头只有10个字节，格式如下：
+FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和包体（body）组成，包头只有10个字节，格式如下：
 
-- pkg_len：8字节整数，body长度，不包含header，只是body的长度
-- cmd：1字节整数，命令码
-- status：1字节整数，状态码，0表示成功，非0失败（UNIX错误码）
+**header 包组成**
+
+| 参数 | 类型 | 说明 |
+|--------|----|------|
+| pkg_len | 8字节整数 | body长度，不包含header，只是body的长度 |
+| cmd | 1字节整数 | 命令码 |
+| status | 1字节整数 | 状态码，0表示成功，非0失败（UNIX错误码） |
 
 数据包中的类型说明：
 
@@ -19,29 +23,34 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 ### 公共命令码
 
 #### FDFS_PROTO_CMD_ACTIVE_TEST
+> 激活测试，通常用于检测连接是否有效。客户端使用连接池的情况下，建立连接后发送一次active test即可和server端保持长连接。
 
-激活测试，通常用于检测连接是否有效。客户端使用连接池的情况下，建立连接后发送一次active test即可和server端保持长连接。
-
+- 请求参数 
+ 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 无 | 无 | 无请求参数 |
 
+- 响应结果 
 ```code
-返回结果：无
+无
 ```
 
 ### 发送给tracker server的命令码
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP
 
-查看一个group状态
+> 查看一个group状态 
+
+- 请求参数 
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 
+- 响应结果
+
 ```code
-返回结果：
 @group_name：17字节字符串
 @total_mb：8字节整数，磁盘空间总量，单位MB
 @free_mb：8字节整数，磁盘剩余空间，单位MB
@@ -58,27 +67,35 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS
 
-列举所有group
+> 列举所有group
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 无 | 无 | 无请求参数 |
 
+- 返回结果
+
 ```code
-返回结果：n 个group实体信息，n >= 0。每个group的数据结构参见上面的TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP。
+n 个group实体信息，n >= 0。每个group的数据结构参见上面的TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP。
 ```
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_STORAGE
 
-列举一个group下的storage server
+> 列举一个group下的storage server
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | server_id | 不定长，最大长度为15字节 | storage server id，可选参数 |
 
+- 返回结果
+
 ```code
-返回结果：n 个storage server实体信息，n >= 0。每个storage实体结构如下：
+n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 @status：1字节整数，storage server状态
 @id：16字节字符串，server ID
 @ip_addr：16字节字符串，IP地址
@@ -144,14 +161,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE
 
-获取一个storage server用来存储文件（不指定group name）
+> 获取一个storage server用来存储文件（不指定group name）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 无 | 无 | 无请求参数 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @ip_addr：15字节字符串，storage server IP地址
 @port：8字节整数，storage server端口号
@@ -160,14 +180,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ONE
 
-获取一个storage server用来存储文件（指定组名）
+> 获取一个storage server用来存储文件（指定组名）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @ip_addr：15字节字符串，storage server IP地址
 @port：8字节整数，storage server端口号
 @store_path_index：1字节整数，基于0的存储路径顺序号
@@ -175,14 +198,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ALL
 
-获取storage server列表用来存储文件（不指定组名）
+> 获取storage server列表用来存储文件（不指定组名）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 无 | 无 | 无请求参数 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @ip_addr：15字节字符串，storage server IP地址
 @port：8字节整数，storage server端口号
@@ -191,14 +217,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ALL
 
-获取storage server列表用来存储文件（指定组名）
+> 获取storage server列表用来存储文件（指定组名）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @ip_addr：15字节字符串，storage server IP地址
 @port：8字节整数，storage server端口号
@@ -207,15 +236,18 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_UPDATE
 
-获取storage server列表用来修改文件或文件附加信息
+> 获取storage server列表用来修改文件或文件附加信息
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @ip_addr：15字节字符串，storage server IP地址
 @port：8字节整数，storage server端口号
@@ -223,15 +255,18 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ALL
 
-获取storage server列表用来下载文件
+> 获取storage server列表用来下载文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @ip_addr：15字节字符串，第一个storage server IP地址
 @port：8字节整数，storage server端口号
@@ -242,7 +277,9 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### STORAGE_PROTO_CMD_UPLOAD_FILE / STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE
 
-上传普通文件 / 上传appender类型文件
+> 上传普通文件 / 上传appender类型文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -253,15 +290,18 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
 | file content | file_size字节二进制内容 | 文件内容 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @filename：不定长字符串，文件名
 ```
 
 #### STORAGE_PROTO_CMD_UPLOAD_SLAVE_FILE
 
-上传slave文件
+> 上传slave文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -274,28 +314,35 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性记录用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
 | file content | file_size字节二进制内容 | 文件内容 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @filename：不定长字符串，文件名
 ```
 
 #### STORAGE_PROTO_CMD_DELETE_FILE
 
-删除文件
+> 删除文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：无
+无
 ```
 
 #### STORAGE_PROTO_CMD_SET_METADATA
 
-设置meta data（文件附加属性）
+> 设置meta data（文件附加属性）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -306,13 +353,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | filename | filename_length字节的字符串 | 文件名 |
 | meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性记录用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
 
+- 返回结果
+
 ```code
-返回结果：无
+无
 ```
 
 #### STORAGE_PROTO_CMD_DOWNLOAD_FILE
 
-下载文件
+> 下载文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -321,36 +372,42 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @file_content：不定长二进制内容，文件内容
 ```
 
 #### STORAGE_PROTO_CMD_GET_METADATA
 
-获取meta data（文件附加属性）
+> 获取meta data（文件附加属性）
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @meta_data：不定长字符串，文件附加属性，每个属性记录用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔
 ```
 
 #### STORAGE_PROTO_CMD_QUERY_FILE_INFO
+>  获取文件信息
 
-获取文件信息
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | group_name | 16字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @file_size：8字节整数，文件大小
 @create_timestamp：8字节整数，文件创建时间（Unix时间戳）
 @crc32：8字节整数，文件内容CRC32校验码
@@ -359,7 +416,9 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### STORAGE_PROTO_CMD_APPEND_FILE
 
-追加文件内容
+> 追加文件内容
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -368,13 +427,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | appender_filename | appender_filename_length字节数字符串 | appender文件名 |
 | file_content | file_size字节数的二进制内容 | 追加的文件内容 |
 
+- 返回结果
+
 ```code
-返回结果：无
+无
 ```
 
 #### STORAGE_PROTO_CMD_MODIFY_FILE
 
-修改文件内容
+> 修改文件内容
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -384,13 +447,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | appender_filename | appender_filename_length字节数字符串 | appender文件名 |
 | file_content | file_size字节数的二进制内容 | 新（目标）文件内容 |
 
+- 返回结果
+
 ```code
-返回结果：无
+无
 ```
 
 #### STORAGE_PROTO_CMD_TRUNCATE_FILE
 
-改变文件大小
+> 改变文件大小
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -398,20 +465,25 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 | truncated_file_size | 8字节整数 | truncate后的文件大小 |
 | appender_filename | appender_filename_length字节数字符串 | appender文件名 |
 
+- 返回结果
+
 ```code
-返回结果：无
+无
 ```
 
 #### STORAGE_PROTO_CMD_REGENERATE_APPENDER_FILENAME
 
-appender类型文件改名为普通文件
+> appender类型文件改名为普通文件
+
+- 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | appender_filename | 不定长字符串 | appender文件名 |
 
+- 返回结果
+
 ```code
-返回结果：
 @group_name：16字节字符串，组名
 @filename：不定长字符串，重新生成的文件名（普通类型）
 ```
