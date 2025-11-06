@@ -22,6 +22,7 @@ import (
 //}
 
 // bytesToInt 字节转换成整形
+// 注意: 该函数只能将传递的字节截取8个，转换为 int64(8位)
 // @bys 需要转换的字节
 func bytesToInt(bys []byte) int64 {
 	bytesBuffer := bytes.NewBuffer(bys)
