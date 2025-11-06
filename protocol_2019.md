@@ -1,29 +1,29 @@
-### FastDFS通信协议详解
+### `FastDFS` 通信协议详解
 
-> 在线地址：https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ
+> 在线地址：`https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ`
 
-FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和包体（body）组成，包头只有10个字节，格式如下：
+`FastDFS` 采用二进制 `TCP` 通信协议。一个数据包由包头（`header`）和包体（`body`）组成，包头只有 `10` 个字节，格式如下：
 
 **header 包组成**
 
 | 参数 | 类型 | 说明 |
-|--------|----|------|
-| pkg_len | 8字节整数 | body长度，不包含header，只是body的长度 |
-| cmd | 1字节整数 | 命令码 |
-| status | 1字节整数 | 状态码，0表示成功，非0失败（UNIX错误码） |
+|----|----|------|
+| pkg_len | 8 字节整数 | body 长度，不包含 header，只是 body 的长度 |
+| cmd | 1 字节整数 | 命令码 |
+| status | 1 字节整数 | 状态码，0 表示成功，非 0 失败（UNIX 错误码） |
 
 数据包中的类型说明：
 
-1. 整数类型采用网络字节序（Big-Endian），包括4字节整数和8字节整数；
-2. 1字节整数不存在字节序问题，在Java中直接映射为byte类型，C/C++中为char类型；
-3. 固定长度的字符串类型以ASCII码0结尾，对于Java等语言需要调用trim处理返回的字符串。变长字符串的长度可以直接拿到或者根据包长度计算出来，不以ASCII 0结尾。
+1. 整数类型采用网络字节序（`Big-Endian`），包括 `4` 字节整数和 `8` 字节整数；
+2. `1` 字节整数不存在字节序问题，在 `Java` 中直接映射为 `byte` 类型，`C/C++` 中为 `char` 类型；
+3. 固定长度的字符串类型以 `ASCII` 码 `0` 结尾，对于 `Java` 等语言需要调用 `trim` 处理返回的字符串。变长字符串的长度可以直接拿到或者根据包长度计算出来，不以 `ASCII 0` 结尾。
 
-下面将列举client发送给FastDFS server的命令码及其body（包体）结构。
+下面将列举 `client` 发送给 `FastDFS server` 的命令码及其 `body`（包体）结构。
 
 ### 公共命令码
 
 #### FDFS_PROTO_CMD_ACTIVE_TEST
-> 激活测试，通常用于检测连接是否有效。客户端使用连接池的情况下，建立连接后发送一次active test即可和server端保持长连接。
+> 激活测试，通常用于检测连接是否有效。客户端使用连接池的情况下，建立连接后发送一次 `active test` 即可和 `server` 端保持长连接。
 
 - 请求参数 
  
@@ -36,17 +36,17 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 无
 ```
 
-### 发送给tracker server的命令码
+### 发送给 tracker server 的命令码
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP
 
-> 查看一个group状态 
+> 查看一个 `group` 状态 
 
 - 请求参数 
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|-----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 
 - 响应结果
 
@@ -67,7 +67,7 @@ FastDFS采用二进制TCP通信协议。一个数据包由包头（header）和�
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS
 
-> 列举所有group
+> 列举所有 `group`
 
 - 请求参数
 
@@ -83,14 +83,14 @@ n 个group实体信息，n >= 0。每个group的数据结构参见上面的TRACK
 
 #### TRACKER_PROTO_CMD_SERVER_LIST_STORAGE
 
-> 列举一个group下的storage server
+> 列举一个 group 下的 storage server`
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
-| server_id | 不定长，最大长度为15字节 | storage server id，可选参数 |
+|----|------|------|
+| group_name | 16 字节字符串 | 组名 |
+| server_id | 不定长，最大长度为 15 字节 | storage server id，可选参数 |
 
 - 返回结果
 
@@ -161,7 +161,7 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE
 
-> 获取一个storage server用来存储文件（不指定group name）
+> 获取一个 storage server 用来存储文件（不指定 group name）
 
 - 请求参数
 
@@ -180,13 +180,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ONE
 
-> 获取一个storage server用来存储文件（指定组名）
+> 获取一个 storage server 用来存储文件（指定组名）
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|-----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 
 - 返回结果
 
@@ -198,7 +198,7 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ALL
 
-> 获取storage server列表用来存储文件（不指定组名）
+> 获取 storage server 列表用来存储文件（不指定组名）
 
 - 请求参数
 
@@ -217,13 +217,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ALL
 
-> 获取storage server列表用来存储文件（指定组名）
+> 获取 storage server 列表用来存储文件（指定组名）
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|-----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 
 - 返回结果
 
@@ -236,13 +236,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_UPDATE
 
-> 获取storage server列表用来修改文件或文件附加信息
+> 获取 storage server 列表用来修改文件或文件附加信息
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
 - 返回结果
@@ -255,13 +255,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ALL
 
-> 获取storage server列表用来下载文件
+> 获取 storage server 列表用来下载文件
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
 - 返回结果
@@ -273,22 +273,22 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 @ip_addr：15字节字符串，其他storage server IP地址
 ```
 
-### 发送给storage server的命令码
+### 发送给 `storage server` 的命令码
 
 #### STORAGE_PROTO_CMD_UPLOAD_FILE / STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE
 
-> 上传普通文件 / 上传appender类型文件
+> 上传普通文件 / 上传 `appender` 类型文件
 
 - 请求参数
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| store_path_index | 1字节整数 | 基于0的存储路径顺序号 |
-| meta_data_length | 8字节整数 | meta data（文件附加属性）长度，可以为0 |
-| file_size | 8字节整数 | 文件大小 |
-| file_ext_name | 6字节字符串 | 不包括小数点的文件扩展名，例如 jpeg、tar.gz |
-| meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
-| file content | file_size字节二进制内容 | 文件内容 |
+| 参数               | 类型       | 说明 |
+|------------------|----------|------|
+| store_path_index |1 字节整数   | 基于 0 的存储路径顺序号 |
+| meta_data_length | 8 字节整数  | meta data（文件附加属性）长度，可以为 0 |
+| file_size        | 8 字节整数  | 文件大小 |
+| file_ext_name    | 6 字节字符串  | 不包括小数点的文件扩展名，例如 jpeg、tar.gz |
+| meta_data        | meta_data_length 字节字符串   | 文件附加属性，每个属性用字符 `\x01` 分隔，名称 `key` 和取值 `value` 之间用字符 `\x02` 分隔 |
+| file_content     | file_size 字节二进制内容 | 文件内容 |
 
 - 返回结果
 
@@ -299,20 +299,20 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### STORAGE_PROTO_CMD_UPLOAD_SLAVE_FILE
 
-> 上传slave文件
+> 上传 `slave` 文件
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| master_filename_length | 8字节整数 | 主文件名长度 |
-| meta_data_length | 8字节整数 | meta data（文件附加属性）长度，可以为0 |
-| file_size | 8字节整数 | 文件大小 |
-| filename_prefix | 16字节字符串 | 从文件前缀名 |
-| file_ext_name | 6字节字符串 | 不包括小数点的文件扩展名，例如 jpeg、tar.gz |
-| master_filename | master_filename_length字节字符串 | 主文件名 |
-| meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性记录用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
-| file content | file_size字节二进制内容 | 文件内容 |
+| `master_filename_length` | `8` 字节整数 | 主文件名长度 |
+| `meta_data_length` | `8` 字节整数 | `meta data`（文件附加属性）长度，可以为 `0` |
+| `file_size` | `8` 字节整数 | 文件大小 |
+| `filename_prefix` | `16` 字节字符串 | 从文件前缀名 |
+| `file_ext_name` | `6` 字节字符串 | 不包括小数点的文件扩展名，例如 `jpeg`、`tar.gz` |
+| `master_filename` | `master_filename_length` 字节字符串 | 主文件名 |
+| `meta_data` | `meta_data_length` 字节字符串 | 文件附加属性，每个属性记录用字符 `\x01` 分隔，名称 `key` 和取值 `value` 之间用字符 `\x02` 分隔 |
+| `file content` | `file_size` 字节二进制内容 | 文件内容 |
 
 - 返回结果
 
@@ -329,8 +329,8 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| group_name | 16字节字符串 | 组名 |
-| filename | 不定长字符串 | 文件名 |
+| `group_name` | `16` 字节字符串 | 组名 |
+| `filename` | 不定长字符串 | 文件名 |
 
 - 返回结果
 
@@ -340,18 +340,18 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### STORAGE_PROTO_CMD_SET_METADATA
 
-> 设置meta data（文件附加属性）
+> 设置 `meta data`（文件附加属性）
 
 - 请求参数
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| filename_length | 8字节整数 | 文件名长度 |
-| meta_data_length | 8字节整数 | meta data（文件附加属性）长度，可以为0 |
-| op_flag | 1字节字符 | 操作标记：'O' - 覆盖方式，'M' - merge方式 |
-| group_name | 16字节字符串 | 组名 |
-| filename | filename_length字节的字符串 | 文件名 |
-| meta_data | meta_data_length字节字符串 | 文件附加属性，每个属性记录用字符 \x01分隔，名称key和取值value之间用字符 \x02分隔 |
+| 参数 | 类型 | 说明                                                      |
+|--|------|---------------------------------------------------------|
+| filename_length | 8 字节整数 | 文件名长度                                                   |
+| meta_data_length | 8 字节整数 | meta data（文件附加属性）长度，可以为 `0`                             |
+| op_flag | 1 字节字符 | 操作标记：'O' - 覆盖方式，'M'` - merge 方式                            |
+| group_name | 16 字节字符串 | 组名                                                      |
+| filename | filename_length 字节的字符串 | 文件名                                                     |
+| meta_data | meta_data_length 字节字符串 | 文件附加属性，每个属性记录用字符 `\x01` 分隔，名称 `key` 和取值 `value` 之间用字符 `\x02` 分隔 |
 
 - 返回结果
 
@@ -366,10 +366,10 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| file_offset | 8字节整数 | 文件偏移量 |
-| download_bytes | 8字节整数 | 下载字节数 |
-| group_name | 16字节字符串 | 组名 |
+|---|------|------|
+| file_offset | 8 字节整数 | 文件偏移量 |
+| download_bytes | 8 字节整数 | 下载字节数 |
+| group_name | 16 字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
 - 返回结果
@@ -380,13 +380,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### STORAGE_PROTO_CMD_GET_METADATA
 
-> 获取meta data（文件附加属性）
+> 获取 `meta data`（文件附加属性）
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
+|----|------|------|
+| group_name | 16 字节字符串 | 组名 |
 | filename | 不定长字符串 | 文件名 |
 
 - 返回结果
@@ -401,9 +401,9 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| group_name | 16字节字符串 | 组名 |
-| filename | 不定长字符串 | 文件名 |
+|---|------|------|
+| group_name | 16 字节字符串 | 组名 |
+|filename | 不定长字符串 | 文件名 |
 
 - 返回结果
 
@@ -421,11 +421,11 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| appender_filename_length | 8字节整数 | appender文件名长度 |
-| file_size | 8字节整数 | 文件大小 |
-| appender_filename | appender_filename_length字节数字符串 | appender文件名 |
-| file_content | file_size字节数的二进制内容 | 追加的文件内容 |
+|--|------|------|
+| appender_filename_length | 8 字节整数 | appender 文件名长度 |
+| file_size | 8 字节整数 | 文件大小 |
+| appender_filename | appender_filename_length 字节数字符串 | appender 文件名 |
+| file_content | file_size 字节数的二进制内容 | 追加的文件内容 |
 
 - 返回结果
 
@@ -440,12 +440,12 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| appender_filename_length | 8字节整数 | appender文件名长度 |
-| file_offset | 8字节整数 | 文件偏移量 |
-| file_size | 8字节整数 | 文件大小 |
-| appender_filename | appender_filename_length字节数字符串 | appender文件名 |
-| file_content | file_size字节数的二进制内容 | 新（目标）文件内容 |
+|--|------|------|
+| appender_filename_length | 8 字节整数 | appender 文件名长度 |
+| file_offset | 8 字节整数 | 文件偏移量 |
+| file_size | 8 字节整数 | 文件大小 |
+| appender_filename | appender_filename_length 字节数字符串 | appender 文件名 |
+| file_content | file_size 字节数的二进制内容 | 新（目标）文件内容 |
 
 - 返回结果
 
@@ -460,10 +460,10 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| appender_filename_length | 8字节整数 | appender文件名长度 |
-| truncated_file_size | 8字节整数 | truncate后的文件大小 |
-| appender_filename | appender_filename_length字节数字符串 | appender文件名 |
+|---|------|------|
+| appender_filename_length | 8 字节整数 | appender 文件名长度 |
+| truncated_file_size | 8 字节整数 | truncate 后的文件大小 |
+| appender_filename | appender_filename_length 字节数字符串 | appender 文件名 |
 
 - 返回结果
 
@@ -473,13 +473,13 @@ n 个storage server实体信息，n >= 0。每个storage实体结构如下：
 
 #### STORAGE_PROTO_CMD_REGENERATE_APPENDER_FILENAME
 
-> appender类型文件改名为普通文件
+> `appender` 类型文件改名为普通文件
 
 - 请求参数
 
 | 参数 | 类型 | 说明 |
-|------|------|------|
-| appender_filename | 不定长字符串 | appender文件名 |
+|-----|------|------|
+| appender_filename | 不定长字符串 | `appender` 文件名 |
 
 - 返回结果
 
