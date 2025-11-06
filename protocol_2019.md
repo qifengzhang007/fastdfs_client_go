@@ -1,6 +1,6 @@
 ### `FastDFS` 通信协议详解
 
-> 在线地址：`https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ`
+> 在线地址：https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ
 
 `FastDFS` 采用二进制 `TCP` 通信协议。一个数据包由包头（`header`）和包体（`body`）组成，包头只有 `10` 个字节，格式如下：
 
