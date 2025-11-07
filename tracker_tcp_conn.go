@@ -74,10 +74,9 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	//@store_path_index：1字节整数，基于0的存储路径顺序号
 	var ipV6Offset = 30 // fastdfs v6.11 以后的版本支持到IP v6，所以IP地址的长度为15字节 + 新偏移30字节
 	// 40 长度字节为老版本的协议标准，> 40字节长度以后的版本为新的协议标准
-	if len(buf) < 40 {
+	if len(buf) <= 40 {
 		ipV6Offset = 0
 	}
-	//fmt.Println("字节长度：", len(buf), buf)
 	t.groupName = string(getBytesByPosition(buf, 0, 15))
 	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
