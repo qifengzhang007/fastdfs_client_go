@@ -48,6 +48,15 @@ func getBytesByPosition(bys []byte, start, num int) []byte {
 // getFileExtNameStr  获取文件扩展名的文本
 // @fileName 文件的完整名
 func getFileExtNameStr(fileName string) string {
+	// 定义常见的复合后缀
+	compoundExtensions := []string{".tar.gz", ".tar.xz", ".tar.Z"}
+	// 先检查是否为复合后缀
+	for _, ext := range compoundExtensions {
+		if strings.HasSuffix(fileName, ext) {
+			return ext[1:] // 去掉开头的点号
+		}
+	}
+	// 如果不是符合后缀，就按普通方式获取
 	index := strings.LastIndexByte(fileName, '.')
 	if index != -1 {
 		return fileName[index+1:]
