@@ -14,6 +14,7 @@ const (
 	TRACKER_PROTO_CMD_RESP = 100
 	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
+	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ONE    = 104
 	// 获取一个 storage server 用来下载文件
 	TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE = 102
 	//  上传文件
@@ -58,6 +59,9 @@ const (
 	TCP_STATUS_INTERRUPTIBLE = 'S'
 	// 不可中断的睡眠状态（刚创建后的状态）
 	TCP_STATUS_UNINTERRUPTIBLE = 'D'
+
+	// 查询一个group的基本信息
+	TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP = 90
 )
 
 // 错误常量
@@ -85,4 +89,5 @@ const (
 	ERROR_STORAGE_SERVER_FILE_NOT_FOUND         = "storage server 查询文件信息时获取响应状态码非0(status={status}), 该文件可能不存在."
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 	ERROR_DELETE_FILE_NOT_FOUNDZE               = "删除文件失败，被删除的文件可能不存在"
+	ERROR_GET_GROUP_INFO_FAILED                 = "查询group信息失败"
 )
