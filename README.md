@@ -120,6 +120,28 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 	 
 ```
 
+
+#### 5.1 查询 group 信息
+
+```code
+// 设置 trackerServer 配置参数
+var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+// 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+TrackerServer: []string{"192.168.10.10:22122"},
+// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+MaxConns:      128,
+}
+fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+
+// 通过指定 组名(groupName) 查询组信息
+groupName := "group1"
+groupInfo, err := fdfsClient.GetGroupInfo(groupName);
+//  groupInfo 表示返回的组基本信息结构体
+
+//注意：删除文件后，多次删除仍然会提示成功，不会返回错误，如果您需要严格获取删除结果,您可以先调用远程查询命令确保文件存在，然后再执行删除命令。
+
+```
+
 ####  以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)  
 
 
