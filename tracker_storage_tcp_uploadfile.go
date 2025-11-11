@@ -1,8 +1,17 @@
 package fastdfs_client_go
 
+import (
+	"errors"
+	"os"
+)
+
 // UploadByFileName  创建fdfs客户端, 上传文件
 // @fileName 指定已经存在的文件名
 func (c *trackerServerTcpClient) UploadByFileName(fileName string) (string, error) {
+	// 检查文件是否存在
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		return "", errors.New(ERROR_FILE_NOT_FOUND + " : " + fileName)
+	}
 	file, err := getFileInfoByFileName(fileName)
 	defer file.Close()
 	if err != nil {

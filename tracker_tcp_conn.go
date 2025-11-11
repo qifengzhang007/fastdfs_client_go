@@ -23,6 +23,7 @@ type trackerTcpConn struct {
 	remoteFilename string
 	// receive 接受返回结果 ↓
 	storageInfo storageInfo
+	groupInfo   GroupInfo
 }
 
 // trackerStorageInfo 通过 trackerServer 获取的 storageServer 信息
@@ -49,7 +50,9 @@ func (t *trackerTcpConn) Send(tcpConn net.Conn) error {
 		buffer.WriteByte(t.header.cmd)
 		buffer.WriteByte(t.header.status)
 		buffer.Write(groupNameConvBytes(t.groupName))
-		buffer.WriteString(t.remoteFilename)
+		if t.remoteFilename != "" {
+			buffer.WriteString(t.remoteFilename)
+		}
 		if _, err := tcpConn.Write(buffer.Bytes()); err != nil {
 			return err
 		}
@@ -66,7 +69,6 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
 	}
-	// 通信协议详情地址： https://mp.weixin.qq.com/s/lpWEv3NCLkfKmtzKJ5lGzQ
 	// 响应body：
 	//@group_name：16字节字符串，组名
 	//@ip_addr：15字节字符串， storage server IP地址
@@ -80,10 +82,27 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	t.groupName = string(getBytesByPosition(buf, 0, 15))
 	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
+
 	switch t.header.cmd {
 	// 后面的参数需要根据具体的命令去设置
-	case STORAGE_PROTO_CMD_UPLOAD_FILE:
+	case TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE:
 		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39+ipV6Offset, 1)[0]
+	case TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP:
+		if t.header.pkgLen == 113 {
+			t.groupInfo.groupName = string(getBytesByPosition(buf, 0, 17))
+			t.groupInfo.totalMb = bytesToInt(getBytesByPosition(buf, 17, 8))
+			t.groupInfo.freeMb = bytesToInt(getBytesByPosition(buf, 25, 8))
+			t.groupInfo.reservedMb = bytesToInt(getBytesByPosition(buf, 33, 8))
+			t.groupInfo.trunkFreeMb = bytesToInt(getBytesByPosition(buf, 41, 8))
+			t.groupInfo.serverCount = bytesToInt(getBytesByPosition(buf, 49, 8))
+			t.groupInfo.serverPort = bytesToInt(getBytesByPosition(buf, 57, 8))
+			t.groupInfo.readableServerCount = bytesToInt(getBytesByPosition(buf, 65, 8))
+			t.groupInfo.writableServerCount = bytesToInt(getBytesByPosition(buf, 73, 8))
+			t.groupInfo.currentWriteServerCount = bytesToInt(getBytesByPosition(buf, 81, 8))
+			t.groupInfo.storePathCount = bytesToInt(getBytesByPosition(buf, 89, 8))
+			t.groupInfo.subdirCountPerPath = bytesToInt(getBytesByPosition(buf, 97, 8))
+			t.groupInfo.currentTrunkFileId = bytesToInt(getBytesByPosition(buf, 105, 8))
+		}
 	default:
 		//
 	}

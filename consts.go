@@ -14,7 +14,8 @@ const (
 	TRACKER_PROTO_CMD_RESP = 100
 	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
-	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITH_GROUP_ONE    = 104
+	// 查询一个group的基本信息
+	TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP = 90
 	// 获取一个 storage server 用来下载文件
 	TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE = 102
 	//  上传文件
@@ -31,7 +32,8 @@ const (
 	FDFS_PROTO_CMD_ACTIVE_TEST = 111
 
 	//  groupName 长度常量
-	FDFS_GROUP_NAME_FIX_LEN = 16
+	FDFS_GROUP_NAME_FIX_LEN  = 16
+	FDFS_GROUP_NAME_FIX_LEN2 = 17
 
 	// TCP连接池最小连接数
 	TCP_CONNS_MIN_NUM = 3
@@ -59,9 +61,6 @@ const (
 	TCP_STATUS_INTERRUPTIBLE = 'S'
 	// 不可中断的睡眠状态（刚创建后的状态）
 	TCP_STATUS_UNINTERRUPTIBLE = 'D'
-
-	// 查询一个group的基本信息
-	TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP = 90
 )
 
 // 错误常量
@@ -71,6 +70,7 @@ const (
 	ERROR_TCP_SERVER_RESPONSE_NOT_ZERO          = "tcp 服务器返回的status状态值不为0"
 	ERROR_FILE_FILENAME_IS_EMPTY                = "待上传的文件名不允许为空"
 	ERROR_FILE_SIZE_IS_ZERO                     = "待上传的文件大小不允许为0字节"
+	ERROR_FILE_NOT_FOUND                        = "待上传的文件不存在"
 	ERROR_FILE_DOWNLOAD_RELA_FILENAME_NOT_EMPTY = "下载文件时, 接受数据对应的文件名不能已经存在，否则可能会影响已经存在的文件数据"
 	ERROR_FILE_EXT_NAME_IS_EMPTY                = "通过文件流(二进制)上传文件时，必须手动指定文件扩展名"
 	ERROR_CONN_POOL_NO_ACTIVE_CONN              = "tcp 连接池中没有有效对象"
@@ -90,4 +90,5 @@ const (
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 	ERROR_DELETE_FILE_NOT_FOUNDZE               = "删除文件失败，被删除的文件可能不存在"
 	ERROR_GET_GROUP_INFO_FAILED                 = "查询group信息失败"
+	ERROR_GET_GROUP_INFO_FAILED_GROUP_NOT_EMPTY = "查询group信息失败，组名不能为空"
 )

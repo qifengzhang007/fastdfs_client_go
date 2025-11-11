@@ -52,11 +52,8 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 	if err := binary.Read(buffer, binary.BigEndian, &h.pkgLen); err != nil {
 		return err
 	} else {
-		//fmt.Println("header-pkgLen 接收数据：", h.pkgLen)
-		//fmt.Println("header-cmd 接收数据：", int(h.cmd))
-		//fmt.Println("header-status 接收数据：", int(h.status))
-		h.cmd = (buf[8:9])[0]
-		h.status = (buf[9:10])[0]
+		//h.cmd = (buf[8:9])[0]     // 这里屏蔽，防止响应时，命令码覆盖请求时的 cmd 命令码
+		h.status = (buf[9:10])[0] // 响应主要关注状态码
 	}
 	return nil
 }
