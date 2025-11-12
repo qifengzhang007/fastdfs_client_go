@@ -12,6 +12,7 @@ const (
 	TCP_HEADER_LEN = 10
 	//tracker 响应码
 	TRACKER_PROTO_CMD_RESP = 100
+	STORAGE_PROTO_CMD_RESP = 100
 	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
 	// 获取 groups 列表
@@ -26,7 +27,8 @@ const (
 	STORAGE_PROTO_CMD_UPLOAD_FILE = 11
 	//  上传append文件
 	STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE = 23
-
+	// append 类型文件追加数据
+	STORAGE_PROTO_CMD_APPEND_FILE = 24
 	//  删除文件
 	STORAGE_PROTO_CMD_DELETE_FILE = 12
 	//  下载文件
@@ -96,6 +98,5 @@ const (
 	ERROR_STORAGE_SERVER_FILE_NOT_FOUND         = "storage server 查询文件信息时获取响应状态码非0(status={status}), 该文件可能不存在."
 	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
 	ERROR_DELETE_FILE_NOT_FOUNDZE               = "删除文件失败，被删除的文件可能不存在"
-	ERROR_GET_GROUP_INFO_FAILED                 = "查询group信息失败"
 	ERROR_GET_GROUP_INFO_FAILED_GROUP_NOT_EMPTY = "查询group信息失败，组名不能为空"
 )

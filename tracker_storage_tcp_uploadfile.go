@@ -69,3 +69,34 @@ func (c *trackerServerTcpClient) UploadByBuffer(buffer []byte, fileExtName strin
 	}
 	return uploadServ.fileId, nil
 }
+
+// UploadAppendFileByFileName 上传append文件
+// 必须在 UploadByFileName 上传append文件后，才能基于已有append类型的文件名进行追加内容
+// @fileName  表示待追加的文件名完全路径
+func (c *trackerServerTcpClient) UploadAppendFileByFileName(fileName string) error {
+	// 检查文件是否存在
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		return errors.New(ERROR_FILE_NOT_FOUND + " : " + fileName)
+	}
+	file, err := getFileInfoByFileName(fileName)
+	defer file.Close()
+	if err != nil {
+		return err
+	}
+
+	storageServInfo, err := c.getStorageInfoByTracker(TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE, "", "")
+	if err != nil {
+		return err
+	}
+
+	uploadServ := &storageServerUploadFileAppendHeaderBody{}
+	uploadServ.fileInfo = file
+	uploadServ.appenderFilenameLength = int64(len(fileName))
+	uploadServ.appenderFilename = fileName
+	uploadServ.fileSize = file.fileSize
+
+	if err = c.sendCmdToStorageServer(uploadServ, storageServInfo); err != nil {
+		return err
+	}
+	return nil
+}
