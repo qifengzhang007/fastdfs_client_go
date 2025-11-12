@@ -22,8 +22,11 @@ const (
 	TRACKER_PROTO_CMD_SERVER_LIST_STORAGE = 92
 	// 获取一个 storage server 用来下载文件
 	TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE = 102
-	//  上传文件
+	//  上传普通文件
 	STORAGE_PROTO_CMD_UPLOAD_FILE = 11
+	//  上传append文件
+	STORAGE_PROTO_CMD_UPLOAD_APPENDER_FILE = 23
+
 	//  删除文件
 	STORAGE_PROTO_CMD_DELETE_FILE = 12
 	//  下载文件

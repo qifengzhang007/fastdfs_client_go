@@ -14,6 +14,8 @@ type storageServerUploadHeaderBody struct {
 	storagePathIndex byte
 	// 文件id (fileId) 响应信息
 	fileId string
+	// 设置被上传的文件类型  - 从外部传递过来
+	uploadFileType int
 }
 
 // Send 文件上传 body 参数详情
@@ -25,7 +27,7 @@ func (s *storageServerUploadHeaderBody) Send(tcpConn net.Conn) (err error) {
 	// @file_content：file_size 字节二进制内容，文件内容
 	// 15 的组成 ：@store_path_index (1字节整数) + @fileSize ( 8字节整数 ) + @file_ext_name (6字节字符串)
 	s.header.pkgLen = s.fileInfo.fileSize + 15
-	s.header.cmd = STORAGE_PROTO_CMD_UPLOAD_FILE
+	s.header.cmd = byte(s.uploadFileType)
 	s.header.status = 0
 
 	if err = s.header.sendHeader(tcpConn); err != nil {
