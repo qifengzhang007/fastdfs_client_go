@@ -95,37 +95,6 @@ func (c *trackerServerTcpClient) getStorageInfoByTracker(cmd byte, groupName str
 	}, nil
 }
 
-// getGroupInfoByTracker  主要通过 tracker server 获取 group 组信息
-// @groupName 组名 (body 参数)
-func (c *trackerServerTcpClient) getGroupInfoByTracker(cmd byte, groupName string) (*GroupInfo, error) {
-	trackerSendParams := &trackerTcpConn{}
-	// 将命令参数设置在 header 头部分
-	trackerSendParams.header.pkgLen = 16
-	trackerSendParams.header.cmd = cmd
-	trackerSendParams.header.status = 0
-	trackerSendParams.groupName = groupName
-	trackerSendParams.remoteFilename = ""
-
-	if err := c.sendHeaderByTrackerServer(trackerSendParams); err != nil {
-		return nil, err
-	}
-	return &GroupInfo{
-		groupName:               trackerSendParams.groupInfo.groupName,
-		totalMb:                 trackerSendParams.groupInfo.totalMb,
-		freeMb:                  trackerSendParams.groupInfo.freeMb,
-		reservedMb:              trackerSendParams.groupInfo.reservedMb,
-		trunkFreeMb:             trackerSendParams.groupInfo.trunkFreeMb,
-		serverCount:             trackerSendParams.groupInfo.serverCount,
-		serverPort:              trackerSendParams.groupInfo.serverPort,
-		readableServerCount:     trackerSendParams.groupInfo.readableServerCount,
-		writableServerCount:     trackerSendParams.groupInfo.writableServerCount,
-		currentWriteServerCount: trackerSendParams.groupInfo.currentWriteServerCount,
-		storePathCount:          trackerSendParams.groupInfo.storePathCount,
-		subdirCountPerPath:      trackerSendParams.groupInfo.subdirCountPerPath,
-		currentTrunkFileId:      trackerSendParams.groupInfo.currentTrunkFileId,
-	}, nil
-}
-
 // sendHeaderByTrackerServer  通过trackerServer 的header 头参数发送特定命令获取 storageServer 服务器
 // @trackerTcpConn trackerServer 的 tcp连接
 func (c *trackerServerTcpClient) sendHeaderByTrackerServer(trackerTcpConn tcpSendReceive) error {

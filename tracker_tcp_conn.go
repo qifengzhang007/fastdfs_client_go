@@ -22,8 +22,10 @@ type trackerTcpConn struct {
 	groupName      string
 	remoteFilename string
 	// receive 接受返回结果 ↓
-	storageInfo storageInfo
-	groupInfo   GroupInfo
+	storageInfo    storageInfo
+	groupInfo      GroupInfo
+	groups         []GroupInfo
+	StorageServers []StorageServer
 }
 
 // trackerStorageInfo 通过 trackerServer 获取的 storageServer 信息
@@ -69,16 +71,9 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
 	}
-	// 响应body：
-	//@group_name：16字节字符串，组名
-	//@ip_addr：15字节字符串， storage server IP地址
-	//@port：8字节整数，storage server端口号
-	//@store_path_index：1字节整数，基于0的存储路径顺序号
-	var ipV6Offset = 30 // fastdfs v6.11 以后的版本支持到IP v6，所以IP地址的长度为15字节 + 新偏移30字节
-	// 40 长度字节为老版本的协议标准，> 40字节长度以后的版本为新的协议标准
-	if len(buf) <= 40 {
-		ipV6Offset = 0
-	}
+	// fastdfs v6.11 以后的版本支持到IP v6，所以IP地址的长度为15字节 + 新偏移30字节
+	// 现在直接按照新的协议标准来解析
+	var ipV6Offset = 30
 	t.groupName = string(getBytesByPosition(buf, 0, 15))
 	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
@@ -86,8 +81,14 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	switch t.header.cmd {
 	// 后面的参数需要根据具体的命令去设置
 	case TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE:
+		// 响应body：
+		//@group_name：16字节字符串，组名
+		//@ip_addr：15字节字符串， storage server IP地址
+		//@port：8字节整数，storage server端口号
+		//@store_path_index：1字节整数，基于0的存储路径顺序号
 		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39+ipV6Offset, 1)[0]
 	case TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP:
+		// 113 字节表示单个组信息的长度
 		if t.header.pkgLen == 113 {
 			t.groupInfo.groupName = string(getBytesByPosition(buf, 0, 17))
 			t.groupInfo.totalMb = bytesToInt(getBytesByPosition(buf, 17, 8))
@@ -102,6 +103,90 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 			t.groupInfo.storePathCount = bytesToInt(getBytesByPosition(buf, 89, 8))
 			t.groupInfo.subdirCountPerPath = bytesToInt(getBytesByPosition(buf, 97, 8))
 			t.groupInfo.currentTrunkFileId = bytesToInt(getBytesByPosition(buf, 105, 8))
+		}
+	case TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS:
+		// 113 字节表示单个组信息的长度
+		groupNum := int(t.header.pkgLen / 113)
+		for i := 1; i <= groupNum; i++ {
+			t.groups[i].groupName = string(getBytesByPosition(buf, 0*i, 17))
+			t.groups[i].totalMb = bytesToInt(getBytesByPosition(buf, 17*i, 8))
+			t.groups[i].freeMb = bytesToInt(getBytesByPosition(buf, 25*i, 8))
+			t.groups[i].reservedMb = bytesToInt(getBytesByPosition(buf, 33*i, 8))
+			t.groups[i].trunkFreeMb = bytesToInt(getBytesByPosition(buf, 41*i, 8))
+			t.groups[i].serverCount = bytesToInt(getBytesByPosition(buf, 49*i, 8))
+			t.groups[i].serverPort = bytesToInt(getBytesByPosition(buf, 57*i, 8))
+			t.groups[i].readableServerCount = bytesToInt(getBytesByPosition(buf, 65*i, 8))
+			t.groups[i].writableServerCount = bytesToInt(getBytesByPosition(buf, 73*i, 8))
+			t.groups[i].currentWriteServerCount = bytesToInt(getBytesByPosition(buf, 81*i, 8))
+			t.groups[i].storePathCount = bytesToInt(getBytesByPosition(buf, 89*i, 8))
+			t.groups[i].subdirCountPerPath = bytesToInt(getBytesByPosition(buf, 97*i, 8))
+			t.groups[i].currentTrunkFileId = bytesToInt(getBytesByPosition(buf, 105*i, 8))
+		}
+	case TRACKER_PROTO_CMD_SERVER_LIST_STORAGE:
+		// 516 表示服务器返回的body体单个 storage server 信息的长度
+		storageServerNum := int(t.header.pkgLen / 516)
+		for i := 1; i <= storageServerNum; i++ {
+			t.StorageServers[i].Status = getBytesByPosition(buf, 0*i, 1)[0]
+			t.StorageServers[i].RwMode = getBytesByPosition(buf, 1*i, 1)[0]
+			t.StorageServers[i].Id = string(getBytesByPosition(buf, 2*i, 16))
+			t.StorageServers[i].IpAddr = string(getBytesByPosition(buf, 18*i, 46))
+			t.StorageServers[i].SrcStorageId = string(getBytesByPosition(buf, 64*i, 16))
+			t.StorageServers[i].Version = string(getBytesByPosition(buf, 80*i, 8))
+			t.StorageServers[i].JoinTime = bytesToInt(getBytesByPosition(buf, 88*i, 8))
+			t.StorageServers[i].UpTime = bytesToInt(getBytesByPosition(buf, 96*i, 8))
+			t.StorageServers[i].TotalMb = bytesToInt(getBytesByPosition(buf, 104*i, 8))
+			t.StorageServers[i].FreeMb = bytesToInt(getBytesByPosition(buf, 112*i, 8))
+			t.StorageServers[i].ReservedMb = bytesToInt(getBytesByPosition(buf, 120*i, 8))
+			t.StorageServers[i].UploadPriority = bytesToInt(getBytesByPosition(buf, 128*i, 8))
+			t.StorageServers[i].StorePathCount = bytesToInt(getBytesByPosition(buf, 136*i, 8))
+			t.StorageServers[i].SubdirCountPerPath = bytesToInt(getBytesByPosition(buf, 144*i, 8))
+			t.StorageServers[i].CurrentWritePath = bytesToInt(getBytesByPosition(buf, 152*i, 8))
+			t.StorageServers[i].StoragePort = bytesToInt(getBytesByPosition(buf, 160*i, 8))
+			t.StorageServers[i].AllocCount = int32(bytesToInt(getBytesByPosition(buf, 168*i, 4)))
+			t.StorageServers[i].CurrentCount = int32(bytesToInt(getBytesByPosition(buf, 172*i, 4)))
+			t.StorageServers[i].MaxCount = int32(bytesToInt(getBytesByPosition(buf, 176*i, 4)))
+			t.StorageServers[i].TotalUploadCount = bytesToInt(getBytesByPosition(buf, 180*i, 8))
+			t.StorageServers[i].SuccessUploadCount = bytesToInt(getBytesByPosition(buf, 188*i, 8))
+			t.StorageServers[i].TotalAppendCount = bytesToInt(getBytesByPosition(buf, 196*i, 8))
+			t.StorageServers[i].SuccessAppendCount = bytesToInt(getBytesByPosition(buf, 204*i, 8))
+			t.StorageServers[i].TotalModifyCount = bytesToInt(getBytesByPosition(buf, 212*i, 8))
+			t.StorageServers[i].SuccessModifyCount = bytesToInt(getBytesByPosition(buf, 220*i, 8))
+			t.StorageServers[i].TotalTruncateCount = bytesToInt(getBytesByPosition(buf, 228*i, 8))
+			t.StorageServers[i].SuccessTruncateCount = bytesToInt(getBytesByPosition(buf, 236*i, 8))
+			t.StorageServers[i].TotalSetMetaCount = bytesToInt(getBytesByPosition(buf, 244*i, 8))
+			t.StorageServers[i].SuccessSetMetaCount = bytesToInt(getBytesByPosition(buf, 252*i, 8))
+			t.StorageServers[i].TotalDeleteCount = bytesToInt(getBytesByPosition(buf, 260*i, 8))
+			t.StorageServers[i].SuccessDeleteCount = bytesToInt(getBytesByPosition(buf, 268*i, 8))
+			t.StorageServers[i].TotalDownloadCount = bytesToInt(getBytesByPosition(buf, 276*i, 8))
+			t.StorageServers[i].SuccessDownloadCount = bytesToInt(getBytesByPosition(buf, 284*i, 8))
+			t.StorageServers[i].TotalGetMetaCount = bytesToInt(getBytesByPosition(buf, 292*i, 8))
+			t.StorageServers[i].SuccessGetMetaCount = bytesToInt(getBytesByPosition(buf, 300*i, 8))
+			t.StorageServers[i].TotalCreateLinkCount = bytesToInt(getBytesByPosition(buf, 308*i, 8))
+			t.StorageServers[i].SuccessCreateLinkCount = bytesToInt(getBytesByPosition(buf, 316*i, 8))
+			t.StorageServers[i].TotalDeleteLinkCount = bytesToInt(getBytesByPosition(buf, 324*i, 8))
+			t.StorageServers[i].SuccessDeleteLinkCount = bytesToInt(getBytesByPosition(buf, 332*i, 8))
+			t.StorageServers[i].TotalUploadBytes = bytesToInt(getBytesByPosition(buf, 340*i, 8))
+			t.StorageServers[i].SuccessUploadBytes = bytesToInt(getBytesByPosition(buf, 348*i, 8))
+			t.StorageServers[i].TotalAppendBytes = bytesToInt(getBytesByPosition(buf, 356*i, 8))
+			t.StorageServers[i].SuccessAppendBytes = bytesToInt(getBytesByPosition(buf, 364*i, 8))
+			t.StorageServers[i].TotalModifyBytes = bytesToInt(getBytesByPosition(buf, 372*i, 8))
+			t.StorageServers[i].SuccessModifyBytes = bytesToInt(getBytesByPosition(buf, 380*i, 8))
+			t.StorageServers[i].TotalDownloadBytes = bytesToInt(getBytesByPosition(buf, 388*i, 8))
+			t.StorageServers[i].SuccessDownloadBytes = bytesToInt(getBytesByPosition(buf, 396*i, 8))
+			t.StorageServers[i].TotalSyncInBytes = bytesToInt(getBytesByPosition(buf, 404*i, 8))
+			t.StorageServers[i].SuccessSyncInBytes = bytesToInt(getBytesByPosition(buf, 412*i, 8))
+			t.StorageServers[i].TotalSyncOutBytes = bytesToInt(getBytesByPosition(buf, 420*i, 8))
+			t.StorageServers[i].SuccessSyncOutBytes = bytesToInt(getBytesByPosition(buf, 428*i, 8))
+			t.StorageServers[i].TotalFileOpenCount = bytesToInt(getBytesByPosition(buf, 436*i, 8))
+			t.StorageServers[i].SuccessFileOpenCount = bytesToInt(getBytesByPosition(buf, 444*i, 8))
+			t.StorageServers[i].TotalFileReadCount = bytesToInt(getBytesByPosition(buf, 452*i, 8))
+			t.StorageServers[i].SuccessFileReadCount = bytesToInt(getBytesByPosition(buf, 460*i, 8))
+			t.StorageServers[i].TotalFileWriteCount = bytesToInt(getBytesByPosition(buf, 468*i, 8))
+			t.StorageServers[i].SuccessFileWriteCount = bytesToInt(getBytesByPosition(buf, 476*i, 8))
+			t.StorageServers[i].LastSourceUpdate = bytesToInt(getBytesByPosition(buf, 484*i, 8))
+			t.StorageServers[i].LastSyncUpdate = bytesToInt(getBytesByPosition(buf, 492*i, 8))
+			t.StorageServers[i].LastSyncedTimestamp = bytesToInt(getBytesByPosition(buf, 500*i, 8))
+			t.StorageServers[i].LastHeartBeatTime = bytesToInt(getBytesByPosition(buf, 508*i, 8))
 		}
 	default:
 		//

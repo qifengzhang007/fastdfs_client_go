@@ -5,6 +5,7 @@
 参考地址(作者2009年发布)：`    http://bbs.chinaunix.net/thread-2001015-1-1.html   `    
 [fastdfs 协议-2019年版本](./protocol_detail_2019.md)  
 [fastdfs 协议-2025年版本](./protocol_detail_2025.md)  
+
 本篇文档是综合了以上两份协议参数编写而成，有时候按照新版本协议对接失败，请切换为旧版本参数对接调试即可 .
 
 ### 2.header 和 body 组成

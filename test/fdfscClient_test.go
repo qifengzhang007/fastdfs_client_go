@@ -119,7 +119,24 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 }
 
-// 查询组(group)信息 - 只需要通过 tracker server 查询即可
+// 获取服务器上所有的 groups 组列表信息
+func TestQueryGetGroups(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+	// 通过指定 组名(groupName) 查询组信息
+	if groups, err := fdfsClient.GetGroups(); err != nil {
+		t.Error("单元测试失败，查询组列表信息出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，groups 组列表信息：%#+v\n", groups)
+	}
+
+}
+
+// 查询指定的组(group)-查询组基本信息
 func TestQueryGroupInfo(t *testing.T) {
 	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
 	if err != nil {
@@ -133,5 +150,22 @@ func TestQueryGroupInfo(t *testing.T) {
 		t.Error("单元测试失败，查询组信息出错：" + err.Error())
 	} else {
 		t.Logf("单元测试完成，group基本信息：%#+v\n", groupInfo)
+	}
+}
+
+// 查询指定的组(group)-查询组下的所有storage server信息
+func TestQueryStorageServersFromGroup(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+	// 通过指定 组名(groupName) 查询组下的所有storage server信息
+	groupName := "group1"
+	if storageServers, err := fdfsClient.GetStorageServersByGroup(groupName); err != nil {
+		t.Error("单元测试失败，查询组下的所有storage server信息出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，group下的所有storage server信息：%#+v\n", storageServers)
 	}
 }

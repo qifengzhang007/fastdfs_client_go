@@ -14,8 +14,12 @@ const (
 	TRACKER_PROTO_CMD_RESP = 100
 	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
+	// 获取 groups 列表
+	TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS = 91
 	// 查询一个group的基本信息
 	TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP = 90
+	// 查询一个group的所有storage server信息
+	TRACKER_PROTO_CMD_SERVER_LIST_STORAGE = 92
 	// 获取一个 storage server 用来下载文件
 	TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE = 102
 	//  上传文件
