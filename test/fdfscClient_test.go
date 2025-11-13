@@ -76,7 +76,7 @@ func TestDownLoadFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id 下载文件
-	fileId := "/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
+	fileId := "group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
 	//fileId := "group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav" // 大小 9451392
 	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-001.mp4"); err != nil {
 		t.Error("下载文件单元测试出错, ERROR:" + err.Error())
@@ -111,7 +111,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
+	fileId := "group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {
