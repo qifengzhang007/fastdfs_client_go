@@ -25,7 +25,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 - 关于其他未实现的不常用功能，如果您需要，可以提 issue , 我们会在下个版本更新进去.
 - 在使用中出现的其他问题，都可以提 issue ，我们会在第一时间处理.
 
-#### 4.1 文件上传(指定文件名)
+#### 4.1 上传文件(指定文件名)
 
 ```code  
     // 设置 trackerServer 配置参数
@@ -38,7 +38,8 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
     # 文件上传核心函数
     fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
     // curDir + fileName  = 被上传文件的路径，例如：/home/dmmo/test-001.mp4
-    fileId, err := fdfsClient.UploadByFileName(curDir + fileName)
+    //UploadByFileName 该函数第二个参数为0 表示上传普通文件 ； 为1表示append文件类型(后续支持追加内容)
+    fileId, err := fdfsClient.UploadByFileName(curDir + fileName,0)  
     // 返回的 fileId 格式：
     // group1/M00/00/00/cnQ3KGkK8BOAUqfCANze3qa2RIk584.mp4
 
@@ -57,11 +58,33 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
     # 文件上传核心函数
     fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
     // 直接传递二进制上传文件，适合文件比较小的场景使用
+    // UploadByBuffer 该函数第二个参数为0 表示上传普通文件 ； 为1表示append文件类型(后续支持追加内容)
     fileId, err := fdfsClient.UploadByBuffer([]byte("测试文本数据转为二进制直接上传"),
 
 ```
 
-#### 4.3 文件下载
+
+#### 4.3 上传append文件 - 基于已有append文件二次(多次)上传追加文件
+ -  调用本函数时，需要传递一个在服务端已存在的 append 类型的文件名, 例如：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log, 该append文件可以通过 4.1、4.2 文件上传函数上传得到.  
+
+```code
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+    TrackerServer: []string{"192.168.10.10:22122"},
+    // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+    MaxConns:      128,
+    }
+    fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+    
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
+    serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除 group 名以后的文件名
+    localFileName := "F:/tmp/123.log"   // 客户端文件名(等待上传的文件名)
+    err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName)
+    
+```
+
+#### 4.4 文件下载
 
 ```code  
 
@@ -82,7 +105,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 
 ```
 
-#### 4.4 获取远程文件信息
+#### 4.5 获取远程文件信息
 
 ```code   
     // 设置 trackerServer 配置参数
@@ -100,7 +123,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 	 
 ```
 
-#### 4.5 文件删除
+#### 4.6 文件删除
 
 ```code   
     // 设置 trackerServer 配置参数
@@ -179,25 +202,6 @@ groupInfo, err := fdfsClient.GetGroupInfo(groupName);
     storageServers, err := fdfsClient.GetStorageServersByGroup(groupName)
 
 
-```
-
-#### 6.1 上传append文件
-
-```code
-    // 设置 trackerServer 配置参数
-    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
-    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
-    TrackerServer: []string{"192.168.10.10:22122"},
-    // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
-    MaxConns:      128,
-    }
-    fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
-    
-	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-    serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
-    localFileName := "F:/tmp/123.log"   // 客户端文件名
-    err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName)
-    
 ```
 
 
