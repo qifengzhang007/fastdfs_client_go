@@ -144,7 +144,7 @@ func TestQueryGroupInfo(t *testing.T) {
 		return
 	}
 	defer fdfsClient.Destroy()
-	// 通过指定 组名(groupName) 查询组信息
+	// 通过指定一个组名(groupName) 查询组信息
 	groupName := "group1"
 	if groupInfo, err := fdfsClient.GetGroupInfo(groupName); err != nil {
 		t.Error("单元测试失败，查询组信息出错：" + err.Error())
@@ -178,7 +178,7 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 		return
 	}
 	defer fdfsClient.Destroy()
-	// 通过指定 组名(groupName) 查询组下的所有storage server信息
+
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
 	serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
 	localFileName := "F:/tmp/123.log"                                      // 客户端文件名

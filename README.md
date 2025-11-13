@@ -121,7 +121,27 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 ```
 
 
-#### 5.1 查询 group 信息
+#### 5.1 查询 groups 信息
+- 服务器存储文件首先是按照 group 组织的，每个 group 下可以有多个 storage server 节点.  
+```code
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+    TrackerServer: []string{"192.168.10.10:22122"},
+    // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+    MaxConns:      128,
+    }
+    fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+    
+    // 返回结果为一个包含所有组信息的结构体切片(数组)
+    groups, err := fdfsClient.GetGroups()
+
+
+
+```
+
+
+#### 5.2 查询 group 信息
 
 ```code
 // 设置 trackerServer 配置参数
@@ -138,9 +158,48 @@ groupName := "group1"
 groupInfo, err := fdfsClient.GetGroupInfo(groupName);
 //  groupInfo 表示返回的组基本信息结构体
 
-//注意：删除文件后，多次删除仍然会提示成功，不会返回错误，如果您需要严格获取删除结果,您可以先调用远程查询命令确保文件存在，然后再执行删除命令。
+```
+
+
+#### 5.3 查询 group 下的所有 storage server 信息
+
+```code
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+    TrackerServer: []string{"192.168.10.10:22122"},
+    // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+    MaxConns:      128,
+    }
+    fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+    
+    // 通过指定 组名(groupName) 查询组下的所有 storage server 信息，
+    // 返回结果为一个包含所有 storage server 信息的结构体切片(数组)
+    groupName := "group1"
+    storageServers, err := fdfsClient.GetStorageServersByGroup(groupName)
+
 
 ```
+
+#### 6.1 上传append文件
+
+```code
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+    TrackerServer: []string{"192.168.10.10:22122"},
+    // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+    MaxConns:      128,
+    }
+    fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+    
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
+    serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
+    localFileName := "F:/tmp/123.log"   // 客户端文件名
+    err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName)
+    
+```
+
 
 ####  以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)  
 
