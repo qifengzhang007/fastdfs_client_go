@@ -44,7 +44,7 @@ func TestUploadByFileName(t *testing.T) {
 	}
 }
 
-// 通过二进制上传文件
+// 通过字节集上传文件
 func TestUploadByBytes(t *testing.T) {
 	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
 	if err != nil {
@@ -57,10 +57,10 @@ func TestUploadByBytes(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		go func(no int) {
 			defer wg.Done()
-			if fileId, err := fdfsClient.UploadByBuffer([]byte(strconv.Itoa(no+1)+" - 二进制直接上传"), "txt"); err != nil {
-				t.Error("通过二进制文件流上传文件失败, ERROR:" + err.Error())
+			if fileId, err := fdfsClient.UploadByBuffer([]byte(strconv.Itoa(no+1)+" - 字节集直接上传"), "txt"); err != nil {
+				t.Error("通过字节集文件流上传文件失败, ERROR:" + err.Error())
 			} else {
-				t.Log("通过二进制文件流上传文件成功！文件名：" + fileId)
+				t.Log("通过字节集文件流上传文件成功！文件名：" + fileId)
 			}
 		}(i)
 	}
@@ -186,5 +186,24 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 		t.Error("单元测试失败，上传append文件出错：" + err.Error())
 	} else {
 		t.Logf("单元测试完成，上传append文件完成")
+	}
+}
+
+// 基于已经存在的append文件名，上传追加文件 - 通过字节集数据追加
+func TestUploadAppendFileByBuffer(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
+	serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
+	buffer := []byte("append - 上传字节集 - 追加的内容")
+	if err = fdfsClient.UploadAppendFileByBuffer(serverAppendFileName, buffer); err != nil {
+		t.Error("单元测试失败，上传append-字节集文件出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，上传append-字节集文件完成")
 	}
 }

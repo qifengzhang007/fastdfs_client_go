@@ -75,7 +75,7 @@ func (c *trackerServerTcpClient) UploadByBuffer(buffer []byte, fileExtName strin
 // @appendFileName  服务端已存在的append文件名
 // @localFileName   客户端待追加的文件名(需要文件完整路径)
 func (c *trackerServerTcpClient) UploadAppendFileByFileName(appendFileName, localFileName string) error {
-	// 检查文件是否存在
+	// 检查客户端等待上传的文件是否存在
 	if _, err := os.Stat(localFileName); os.IsNotExist(err) {
 		return errors.New(ERROR_FILE_NOT_FOUND + " : " + localFileName)
 	}
@@ -95,6 +95,35 @@ func (c *trackerServerTcpClient) UploadAppendFileByFileName(appendFileName, loca
 	uploadServ.appenderFilenameLength = int64(len(appendFileName))
 	uploadServ.appenderFilename = appendFileName
 	uploadServ.fileSize = file.fileSize
+
+	if err = c.sendCmdToStorageServer(uploadServ, storageServInfo); err != nil {
+		return err
+	}
+	return nil
+}
+
+// UploadAppendFileByBuffer 上传append文件 - 通过二进制数据追加
+// 必须在 UploadByFileName 上传append文件后，才能基于已有append类型的文件名进行追加内容
+// @appendFileName  服务端已存在的append文件名
+// @buffer   二进制数据，[]byte 类型
+func (c *trackerServerTcpClient) UploadAppendFileByBuffer(appendFileName string, buffer []byte) error {
+	// 上传 append 文件时，文件扩展名用不到，但是借用了上传普通二进制的检查函数，后悔随便填写一个即可
+	tmpFileInfo, err := getFileInfoByFileByte(buffer, "append")
+	defer tmpFileInfo.Close()
+	if err != nil {
+		return err
+	}
+
+	storageServInfo, err := c.getStorageInfoByTracker(TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE, "", "")
+	if err != nil {
+		return err
+	}
+
+	uploadServ := &storageServerUploadFileAppendHeaderBody{}
+	uploadServ.fileInfo = tmpFileInfo
+	uploadServ.appenderFilenameLength = int64(len(appendFileName))
+	uploadServ.appenderFilename = appendFileName
+	uploadServ.fileSize = tmpFileInfo.fileSize
 
 	if err = c.sendCmdToStorageServer(uploadServ, storageServInfo); err != nil {
 		return err
