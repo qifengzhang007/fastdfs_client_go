@@ -169,3 +169,22 @@ func TestQueryStorageServersFromGroup(t *testing.T) {
 		t.Logf("单元测试完成，group下的所有storage server信息：%#+v\n", storageServers)
 	}
 }
+
+// 基于已经存在的append文件名，上传追加文件
+func TestUploadAppendFileByFileName(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+	// 通过指定 组名(groupName) 查询组下的所有storage server信息
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
+	serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
+	localFileName := "F:/tmp/123.log"                                      // 客户端文件名
+	if err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName); err != nil {
+		t.Error("单元测试失败，上传append文件出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，上传append文件完成")
+	}
+}
