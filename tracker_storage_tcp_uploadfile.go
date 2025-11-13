@@ -72,13 +72,14 @@ func (c *trackerServerTcpClient) UploadByBuffer(buffer []byte, fileExtName strin
 
 // UploadAppendFileByFileName 上传append文件
 // 必须在 UploadByFileName 上传append文件后，才能基于已有append类型的文件名进行追加内容
-// @fileName  表示待追加的文件名完全路径
-func (c *trackerServerTcpClient) UploadAppendFileByFileName(fileName string) error {
+// @appendFileName  服务端已存在的append文件名
+// @localFileName   客户端待追加的文件名(需要文件完整路径)
+func (c *trackerServerTcpClient) UploadAppendFileByFileName(appendFileName, localFileName string) error {
 	// 检查文件是否存在
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		return errors.New(ERROR_FILE_NOT_FOUND + " : " + fileName)
+	if _, err := os.Stat(localFileName); os.IsNotExist(err) {
+		return errors.New(ERROR_FILE_NOT_FOUND + " : " + localFileName)
 	}
-	file, err := getFileInfoByFileName(fileName)
+	file, err := getFileInfoByFileName(localFileName)
 	defer file.Close()
 	if err != nil {
 		return err
@@ -91,8 +92,8 @@ func (c *trackerServerTcpClient) UploadAppendFileByFileName(fileName string) err
 
 	uploadServ := &storageServerUploadFileAppendHeaderBody{}
 	uploadServ.fileInfo = file
-	uploadServ.appenderFilenameLength = int64(len(fileName))
-	uploadServ.appenderFilename = fileName
+	uploadServ.appenderFilenameLength = int64(len(appendFileName))
+	uploadServ.appenderFilename = appendFileName
 	uploadServ.fileSize = file.fileSize
 
 	if err = c.sendCmdToStorageServer(uploadServ, storageServInfo); err != nil {
