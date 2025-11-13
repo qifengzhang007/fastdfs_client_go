@@ -45,7 +45,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 
 ```
 
-#### 4.2 文件上传(传递二进制)
+#### 4.2 上传文件(传递二进制)
 
 ```code  
     // 设置 trackerServer 配置参数
