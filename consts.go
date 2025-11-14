@@ -80,7 +80,7 @@ const (
 	ERROR_FILE_FILENAME_IS_EMPTY                = "待上传的文件名不允许为空"
 	ERROR_FILE_SIZE_IS_ZERO                     = "待上传的文件大小不允许为0字节"
 	ERROR_FILE_NOT_FOUND                        = "待上传的文件不存在"
-	ERROR_FILE_DOWNLOAD_RELA_FILENAME_NOT_EMPTY = "下载文件时, 接受数据对应的文件名不能已经存在，否则可能会影响已经存在的文件数据"
+	ERROR_FILE_DOWNLOAD_RELA_FILENAME_NOT_EMPTY = "下载文件时, 请确保接收数据的文件名不存在，否则会影响已经存在的文件数据"
 	ERROR_FILE_EXT_NAME_IS_EMPTY                = "通过文件流(二进制)上传文件时，必须手动指定文件扩展名"
 	ERROR_CONN_POOL_NO_ACTIVE_CONN              = "tcp 连接池中没有有效对象"
 	ERROR_HEADER_RECEV_STATUS_NOT_ZERO          = "收到的消息头（receive header）中 status 值不为0"

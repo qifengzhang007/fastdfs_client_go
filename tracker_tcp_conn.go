@@ -73,19 +73,35 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	}
 	// fastdfs v6.11 以后的版本支持到IP v6，所以IP地址的长度为15字节 + 新偏移30字节
 	// 现在直接按照新的协议标准来解析
+	//fmt.Println("header-cmd:", t.header.cmd)
+	//fmt.Println("header-respCmd:", t.header.respCmd)
+	//fmt.Println("header-len:", t.pkgLen)
 	var ipV6Offset = 30
-	t.groupName = string(getBytesByPosition(buf, 0, 15))
-	t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
-	t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
-
 	switch t.header.cmd {
 	// 后面的参数需要根据具体的命令去设置
+	case TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE:
+		//@group_name：16字节字符串，组名
+		//@ip_addr：15/45字节字符串， storage server IP地址（V6.11前为15字节，V6.11开始为45字节）
+		//@port：8字节整数，storage server端口号
+		if t.pkgLen <= 39 {
+			ipV6Offset = 0
+		}
+		t.groupName = string(getBytesByPosition(buf, 0, 15))
+		t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
+		t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 	case TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE:
 		// 响应body：
 		//@group_name：16字节字符串，组名
-		//@ip_addr：15字节字符串， storage server IP地址
+		//@ip_addr：15字节字符串， storage server IP地址, IPv6在服务端启用时，IP地址的偏移量+30字节
 		//@port：8字节整数，storage server端口号
 		//@store_path_index：1字节整数，基于0的存储路径顺序号
+
+		if t.pkgLen <= 40 {
+			ipV6Offset = 0
+		}
+		t.groupName = string(getBytesByPosition(buf, 0, 15))
+		t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
+		t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39+ipV6Offset, 1)[0]
 	case TRACKER_PROTO_CMD_SERVER_LIST_ONE_GROUP:
 		// 113 字节表示单个组信息的长度
@@ -108,6 +124,8 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 		// 113 字节表示单个组信息的长度
 		var groupBodyLen = 113
 		groupNum := int(t.header.pkgLen / int64(groupBodyLen))
+		// 调整groups切片长度，确保有足够空间存储所有组信息
+		t.groups = make([]GroupInfo, groupNum)
 		for i := 0; i < groupNum; i++ {
 			t.groups[i].groupName = string(getBytesByPosition(buf, 0+(i*groupBodyLen), 17))
 			t.groups[i].totalMb = bytesToInt(getBytesByPosition(buf, 17+(i*groupBodyLen), 8))
@@ -125,8 +143,10 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 		}
 	case TRACKER_PROTO_CMD_SERVER_LIST_STORAGE:
 		// 516 表示服务器返回的body体单个 storage server 信息的长度
-		var storagerServerBodyLen = 516
+		var storagerServerBodyLen = 516 // 最新版本返回实际长度：487，与文档不一致，等待后续修正代码
 		storageServerNum := int(t.header.pkgLen / int64(storagerServerBodyLen))
+		// 调整 StorageServers 切片长度，确保有足够空间存储所有组信息
+		t.StorageServers = make([]StorageServer, storageServerNum)
 		for i := 0; i < storageServerNum; i++ {
 			t.StorageServers[i].Status = getBytesByPosition(buf, 0+(i*storagerServerBodyLen), 1)[0]
 			t.StorageServers[i].RwMode = getBytesByPosition(buf, 1+(i*storagerServerBodyLen), 1)[0]
@@ -188,7 +208,7 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 			t.StorageServers[i].LastSourceUpdate = bytesToInt(getBytesByPosition(buf, 484+(i*storagerServerBodyLen), 8))
 			t.StorageServers[i].LastSyncUpdate = bytesToInt(getBytesByPosition(buf, 492+(i*storagerServerBodyLen), 8))
 			t.StorageServers[i].LastSyncedTimestamp = bytesToInt(getBytesByPosition(buf, 500+(i*storagerServerBodyLen), 8))
-			t.StorageServers[i].LastHeartBeatTime = bytesToInt(getBytesByPosition(buf, 508*+(i*storagerServerBodyLen), 8))
+			t.StorageServers[i].LastHeartBeatTime = bytesToInt(getBytesByPosition(buf, 508+(i*storagerServerBodyLen), 8))
 		}
 	default:
 		//

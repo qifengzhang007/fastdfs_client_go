@@ -14,7 +14,7 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 2. trackerServer 服务器会返回storage_server 服务器地址： xx.xx.xx.xx: 23000，
 	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
-	TrackerServer: []string{"114.116.55.40:22122"},
+	TrackerServer: []string{"192.168.10.10:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
 	MaxConns: 128,
 }
@@ -25,7 +25,7 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 
 // var curDir = "F:/BaiduNetdiskDownload/MySQL高级/"
 var curDir = "E:/tmp/"
-var fileName = "test-001.mp4" // 28M 左右
+var fileName = "20251114-001.txt" // 28M 左右
 
 // 通过文件名上传文件
 func TestUploadByFileName(t *testing.T) {
@@ -53,8 +53,8 @@ func TestUploadByBytes(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	var wg sync.WaitGroup
-	wg.Add(10)
-	for i := 0; i < 10; i++ {
+	wg.Add(5)
+	for i := 0; i < 5; i++ {
 		go func(no int) {
 			defer wg.Done()
 			if fileId, err := fdfsClient.UploadByBuffer([]byte(strconv.Itoa(no+1)+" - 字节集直接上传"), "txt"); err != nil {
@@ -76,9 +76,9 @@ func TestDownLoadFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id 下载文件
-	fileId := "group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
+	fileId := "group1/M00/00/00/ZzOT4WkW4FGECb04AAAAAAqdLWg141.txt"
 	//fileId := "group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav" // 大小 9451392
-	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-001.mp4"); err != nil {
+	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-append-003.txt"); err != nil {
 		t.Error("下载文件单元测试出错, ERROR:" + err.Error())
 	} else {
 		t.Log("下载文件单元测试成功 !")
@@ -111,7 +111,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.mp4"
+	fileId := "group1/M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {
@@ -180,8 +180,8 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
-	localFileName := "F:/tmp/123.log"                                      // 客户端文件名
+	serverAppendFileName := "M00/00/00/ZzOT4WkW3qWEYyoEAAAAADEe6oc138.txt" // 删除group名以后的 append文件名
+	localFileName := "E:/tmp/123.log"                                      // 客户端文件名
 	if err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName); err != nil {
 		t.Error("单元测试失败，上传append文件出错：" + err.Error())
 	} else {
@@ -199,8 +199,8 @@ func TestUploadAppendFileByBuffer(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log" // 删除group名以后的 append文件名
-	buffer := []byte("append - 上传字节集 - 追加的内容")
+	serverAppendFileName := "M00/00/00/ZzOT4WkW4FGECb04AAAAAAqdLWg141.txt" // 删除group名以后的 append文件名
+	buffer := []byte("\r\nappend - 上传字节集 - 追加的内容-222")
 	if err = fdfsClient.UploadAppendFileByBuffer(serverAppendFileName, buffer); err != nil {
 		t.Error("单元测试失败，上传append-字节集文件出错：" + err.Error())
 	} else {

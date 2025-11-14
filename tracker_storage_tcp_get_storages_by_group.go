@@ -9,6 +9,8 @@ func (c *trackerServerTcpClient) GetStorageServersByGroup(groupName string) (res
 	trackerSendParams.header.status = 0
 	trackerSendParams.groupName = groupName
 	trackerSendParams.remoteFilename = ""
+	// 初始化 StorageServers 切片，防止在 Receive 方法中访问未初始化的切片元素
+	trackerSendParams.StorageServers = make([]StorageServer, 0)
 
 	if err = c.sendHeaderByTrackerServer(trackerSendParams); err != nil {
 		return nil, err
