@@ -76,9 +76,9 @@ func TestDownLoadFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id 下载文件
-	fileId := "group1/M00/00/00/ZzOT4WkW4FGECb04AAAAAAqdLWg141.txt"
+	fileId := "group1/M00/00/00/ZzOT4WkXR6uAODW7AAAAN7EZJzQ965.txt"
 	//fileId := "group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav" // 大小 9451392
-	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-append-003.txt"); err != nil {
+	if err = fdfsClient.DownloadFileByFileId(fileId, curDir+"下载-demo-003.txt"); err != nil {
 		t.Error("下载文件单元测试出错, ERROR:" + err.Error())
 	} else {
 		t.Log("下载文件单元测试成功 !")
@@ -111,7 +111,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "group1/M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
+	fileId := "group1/M00/00/00/ZzOT4WkXR6uAODW7AAAAN7EZJzQ965.txt"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {
@@ -181,7 +181,7 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
 	serverAppendFileName := "M00/00/00/ZzOT4WkW3qWEYyoEAAAAADEe6oc138.txt" // 删除group名以后的 append文件名
-	localFileName := "E:/tmp/123.log"                                      // 客户端文件名
+	localFileName := "E:/tmp/20251114-001.txt"                             // 客户端文件名
 	if err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName); err != nil {
 		t.Error("单元测试失败，上传append文件出错：" + err.Error())
 	} else {
@@ -199,7 +199,7 @@ func TestUploadAppendFileByBuffer(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/ZzOT4WkW4FGECb04AAAAAAqdLWg141.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "M00/00/00/ZzOT4WkW3qWEYyoEAAAAADEe6oc138.txt" // 删除group名以后的 append文件名
 	buffer := []byte("\r\nappend - 上传字节集 - 追加的内容-222")
 	if err = fdfsClient.UploadAppendFileByBuffer(serverAppendFileName, buffer); err != nil {
 		t.Error("单元测试失败，上传append-字节集文件出错：" + err.Error())

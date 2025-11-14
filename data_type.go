@@ -98,4 +98,5 @@ type StorageServer struct {
 	LastSyncUpdate         int64  // 8字节整数，最近一次同步更新时间
 	LastSyncedTimestamp    int64  // 8字节整数，最近一次被同步到的时间戳
 	LastHeartBeatTime      int64  // 8字节整数，最近一次心跳时间
+	IfTrunkServer          byte   // 1字节整数，是否为trunk server（since V6.13）
 }
