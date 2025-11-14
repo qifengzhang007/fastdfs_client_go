@@ -21,9 +21,19 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 
 ### 4. 已封装的函数列表
 
-- 1.0.0 版本我们提供了核心功能，基本上可以解决绝大部分的需求，同时提供了非常详细的二进制协议对接细节、go 示例代码, 其他开发者可以仿照我们的项目结构自己扩展不常用功能.
-- 关于其他未实现的不常用功能，如果您需要，可以提 issue , 我们会在下个版本更新进去.
-- 在使用中出现的其他问题，都可以提 issue ，我们会在第一时间处理.
+| 序号 | 函数 | 功能 | 适用版本说明|
+|-----|-----|-----|----|
+| 1 | UploadByFileName | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本|
+| 2 | UploadByBuffer | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本|
+| 3 | DownloadFileByFileId | 根据文件ID下载文件 | 所有版本|
+| 5 | GetRemoteFileInfo | 根据文件ID获取文件信息 |     所有版本|
+| 4 | DeleteFile | 根据文件ID删除文件 | 所有版本|
+| 6 | GetGroups | 获取所有组(groups)信息 | ≥ 6.13|
+| 7 | GetGroupInfo | 获取一个特定组(group)信息 |  ≥ 6.13|
+| 8 | GetStorageServersByGroup | 获取组(group)下的所有存储节点(storage server)信息 |  ≥ 6.13|
+
+
+
 
 #### 4.1 上传文件(指定文件名)
 
@@ -45,7 +55,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 
 ```
 
-#### 4.2 上传文件(传递二进制)
+#### 4.2 上传文件(传递字节集 []byte)
 
 ```code  
     // 设置 trackerServer 配置参数
@@ -204,13 +214,12 @@ groupInfo, err := fdfsClient.GetGroupInfo(groupName);
 
 ```
 
-
 ####  以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)  
 
 
 #### 5.最后一些说明  
 - 5.1 `fastdfs` 分布式文件系统应该部署在内网环境,  整个系统原则上是不对互联网直接开放访问权限的（除了开发调试之外）.    
-- 5.2 基于以上原因，开发者可以将用户上传的文件，首先保存在临时目录，然后调用本客户端将临时目录的文件上传到 `fastdfs` 文件系统, 获取可访问的`文件id(fileId)(格式：group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav)`，最终返回给用户访问地址(建议通过nginx代理访问资源)  
+- 5.2 基于以上原因，开发者可以将用户上传的文件，首先暂停在临时目录，然后调用本客户端将临时目录的文件上传到 `fastdfs` 文件系统, 获取可访问的`文件id(fileId)(格式：group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav)`，最终返回给用户访问地址(建议通过nginx代理访问资源)  
 
 #### 使用中遇到问题需要讨论
 - QQ群：129885228 
