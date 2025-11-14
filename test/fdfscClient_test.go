@@ -35,7 +35,7 @@ func TestUploadByFileName(t *testing.T) {
 		return
 	}
 	defer fdfsClient.Destroy()
-	fileId, err := fdfsClient.UploadByFileName(curDir + fileName)
+	fileId, err := fdfsClient.UploadByFileName(curDir+fileName, 1)
 	if err != nil {
 		t.Errorf("单元测试失败，上传文件出错：%s", err.Error())
 		return
@@ -94,7 +94,7 @@ func TestDeleteFile(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 删除文件
-	fileId := "group1/M00/00/00/cnQ3KGkTVyCAHxovAbnLqPIYSzQ745.mp4"
+	fileId := "group1/M00/00/00/ZzOT4WkXSCqAPtfhAAAAGVSr950529.txt"
 	if err = fdfsClient.DeleteFile(fileId); err != nil {
 		t.Error("单元测试失败，删除文件出错：" + err.Error())
 	} else {
@@ -180,7 +180,7 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/ZzOT4WkW3qWEYyoEAAAAADEe6oc138.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt" // 删除group名以后的 append文件名
 	localFileName := "E:/tmp/20251114-001.txt"                             // 客户端文件名
 	if err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName); err != nil {
 		t.Error("单元测试失败，上传append文件出错：" + err.Error())
@@ -199,11 +199,29 @@ func TestUploadAppendFileByBuffer(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/ZzOT4WkW3qWEYyoEAAAAADEe6oc138.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "M00/00/00/ZzOT4WkXZpqAB17hAAAAb8KVDIE745.txt" // 删除group名以后的 append文件名
 	buffer := []byte("\r\nappend - 上传字节集 - 追加的内容-222")
 	if err = fdfsClient.UploadAppendFileByBuffer(serverAppendFileName, buffer); err != nil {
 		t.Error("单元测试失败，上传append-字节集文件出错：" + err.Error())
 	} else {
 		t.Logf("单元测试完成，上传append-字节集文件完成")
+	}
+}
+
+// 转换append类型的文件为普通文件
+func TestConvAppendFileToRegularFile(t *testing.T) {
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	if err != nil {
+		t.Error("单元测试失败，创建TCP连接出错：" + err.Error())
+		return
+	}
+	defer fdfsClient.Destroy()
+
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/ZzOT4WkXSCqALRYbAAAAGT9wmzs044.log
+	serverAppendFileName := "group1/M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt" // 删除group名以后的 append文件名
+	if newFileId, err := fdfsClient.ConvAppendFileToRegularFile(serverAppendFileName); err != nil {
+		t.Error("单元测试失败，转换append类型的文件为普通文件出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，转换append类型的文件为普通文件完成，新文件ID：%s", newFileId)
 	}
 }

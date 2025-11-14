@@ -15,6 +15,8 @@ const (
 	STORAGE_PROTO_CMD_RESP = 100
 	//获取一个storage server用来存储文件（不指定组名)
 	TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE = 101
+	//  获取storage server服务器信息用来修改文件
+	TRACKER_PROTO_CMD_SERVICE_QUERY_UPDATE = 103
 	// 获取 groups 列表
 	TRACKER_PROTO_CMD_SERVER_LIST_ALL_GROUPS = 91
 	// 查询一个group的基本信息
@@ -35,6 +37,8 @@ const (
 	STORAGE_PROTO_CMD_DOWNLOAD_FILE = 14
 	//  获取文件信息
 	STORAGE_PROTO_CMD_QUERY_FILE_INFO = 22
+	//  转换append类型的文件为普通文件
+	STORAGE_PROTO_CMD_REGENERATE_APPENDER_FILENAME = 38
 
 	//  激活测试，通常用于检测连接是否有效
 	// 客户端使用连接池的情况下，建立连接后发送一次active test即可和server端保持长连接。
@@ -74,29 +78,33 @@ const (
 
 // 错误常量
 const (
-	ERROR_CONN_POOL_OVER_MAX                    = "连接池超过已设置的最大连接数 , 当前最大连接数："
-	ERROR_GET_TCP_CONN_FAIL                     = "从连接池获取一个 tcp 连接失败 , 出错明细："
-	ERROR_TCP_SERVER_RESPONSE_NOT_ZERO          = "tcp 服务器返回的status状态值不为0"
-	ERROR_FILE_FILENAME_IS_EMPTY                = "待上传的文件名不允许为空"
-	ERROR_FILE_SIZE_IS_ZERO                     = "待上传的文件大小不允许为0字节"
-	ERROR_FILE_NOT_FOUND                        = "待上传的文件不存在"
-	ERROR_FILE_DOWNLOAD_RELA_FILENAME_NOT_EMPTY = "下载文件时, 请确保接收数据的文件名不存在，否则会影响已经存在的文件数据"
-	ERROR_FILE_EXT_NAME_IS_EMPTY                = "通过文件流(二进制)上传文件时，必须手动指定文件扩展名"
-	ERROR_CONN_POOL_NO_ACTIVE_CONN              = "tcp 连接池中没有有效对象"
-	ERROR_HEADER_RECEV_STATUS_NOT_ZERO          = "收到的消息头（receive header）中 status 值不为0"
-	ERROR_HEADER_RECEV_ERROR                    = "收到的消息头（receive header）中有错误"
-	ERROR_HEADER_RECEV_LEN_LT16_ERROR           = "接收上传结果出错，没有收到完整的响应，body长度必须 >= 16"
-	ERROR_STORAGE_SERVER_FILE_NAME_FORMAT2      = "storage server 文件名格式不正确,  文件Id(fileId) 中必须至少存在一个斜杠( /)，不能不能在开头位置"
-	ERROR_STORAGE_SERVER_DOWN_HEADER            = "storage server 下载时获取服务器响应头出错: "
-	ERROR_STORAGE_SERVER_DOWN_IS_EMPTY          = "storage server 被下载的文件在服务器端不存在(或文件内容为空)"
-	ERROR_STORAGE_SERVER_DOWN_FILENAME_EMPTY    = "storage server 下载文件时，必须指定文件名才能保存"
-	ERROR_STORAGE_SERVER_DOWN_RECEIVE           = "storage server 下载时接受文件出错: "
-	ERROR_STORAGE_SERVER_DOWN_FILE_RECEIVE      = "storage server 下载的文件在读取数据过程中出错："
-	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH  = "storage server 下载的文件写出到硬盘出错："
-	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES = "storage server 上传文件, 通过tcp连接发送二进制文件时出错："
-	ERROR_STORAGE_SERVER_GET_FILEINFO           = "storage server 查询文件信息时出错："
-	ERROR_STORAGE_SERVER_FILE_NOT_FOUND         = "storage server 查询文件信息时获取响应状态码非0(status={status}), 该文件可能不存在."
-	ERROR_TCP_CONN_ASSERT_FAIL                  = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
-	ERROR_DELETE_FILE_NOT_FOUNDZE               = "删除文件失败，被删除的文件可能不存在"
-	ERROR_GET_GROUP_INFO_FAILED_GROUP_NOT_EMPTY = "查询group信息失败，组名不能为空"
+	ERROR_CONN_POOL_OVER_MAX                          = "连接池超过已设置的最大连接数 , 当前最大连接数："
+	ERROR_GET_TCP_CONN_FAIL                           = "从连接池获取一个 tcp 连接失败 , 出错明细："
+	ERROR_TCP_SERVER_RESPONSE_NOT_ZERO                = "tcp 服务器返回的status状态值不为0"
+	ERROR_FILE_FILENAME_IS_EMPTY                      = "待上传的文件名不允许为空"
+	ERROR_FILE_SIZE_IS_ZERO                           = "待上传的文件大小不允许为0字节"
+	ERROR_FILE_NOT_FOUND                              = "待上传的文件不存在"
+	ERROR_FILE_DOWNLOAD_RELA_FILENAME_NOT_EMPTY       = "下载文件时, 请确保存储数据的文件名不存在，否则会影响已经存在的文件数据"
+	ERROR_FILE_EXT_NAME_IS_EMPTY                      = "通过文件流(二进制)上传文件时，必须手动指定文件扩展名"
+	ERROR_CONN_POOL_NO_ACTIVE_CONN                    = "tcp 连接池中没有有效对象"
+	ERROR_TRACKER_SERVER_STATUS_NOT_ZERO              = "tracker-server 收到的消息头（receive header）中 status  值非0,status= "
+	ERROR_STORAGE_SERVER_STATUS_NOT_ZERO              = "storage-server 收到的消息头（receive header）中 status 值非0,status= "
+	ERROR_HEADER_RECEV_ERROR                          = "收到的消息头（receive header）中有错误"
+	ERROR_HEADER_RECEV_LEN_LT16_ERROR                 = "接收上传结果出错，没有收到完整的响应，body长度必须 >= 16"
+	ERROR_STORAGE_SERVER_FILE_NAME_FORMAT2            = "storage server 文件名格式不正确,  文件Id(fileId) 中必须至少存在一个斜杠( /)，不能不能在开头位置"
+	ERROR_STORAGE_SERVER_DOWN_HEADER                  = "storage server 下载时获取服务器响应头出错: "
+	ERROR_STORAGE_SERVER_DOWN_IS_EMPTY                = "storage server 被下载的文件在服务器端不存在(或文件内容为空)"
+	ERROR_STORAGE_SERVER_DOWN_FILENAME_EMPTY          = "storage server 下载文件时，必须指定文件名才能保存"
+	ERROR_STORAGE_SERVER_DOWN_RECEIVE                 = "storage server 下载时接受文件出错: "
+	ERROR_STORAGE_SERVER_DOWN_FILE_RECEIVE            = "storage server 下载的文件在读取数据过程中出错："
+	ERROR_STORAGE_SERVER_DOWN_FILE_WRITE_FLUSH        = "storage server 下载的文件写出到硬盘出错："
+	ERROR_STORAGE_SERVER_FILE_UPLOAD_RESPONSE_ERR     = "storage server 上传文件时，服务器相应状态码非0, status: "
+	ERROR_STORAGE_SERVER_FILE_UPLOAD_SEND_BYTES       = "storage server 上传文件, 通过tcp连接发送二进制文件时出错："
+	ERROR_STORAGE_SERVER_GET_FILEINFO                 = "storage server 查询文件信息时出错："
+	ERROR_STORAGE_SERVER_FILE_NOT_FOUND               = "storage server 查询文件信息时获取响应状态码非0(status={status}), 该文件可能不存在."
+	ERROR_TCP_CONN_ASSERT_FAIL                        = "从连接池中获取的 tcp 连接断言为结构体 tcpConnBaseInfo 失败"
+	ERROR_DELETE_FILE_NOT_FOUNDZE                     = "删除文件失败，被删除的文件在服务器可能不存在"
+	ERROR_GET_GROUP_INFO_FAILED_GROUP_NOT_EMPTY       = "查询group信息失败，组名不能为空"
+	ERROR_STORAGE_SERVER_UPLOAD_APPENDER_FILE         = "storage server 上传append文件时出错, 响应状态status: "
+	ERROR_STORAGE_SERVER_REGENERATE_APPENDER_FILENAME = "storage server 转换append类型的文件为普通文件时出错, "
 )

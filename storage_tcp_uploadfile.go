@@ -75,6 +75,9 @@ func (s *storageServerUploadHeaderBody) Receive(tcpConn net.Conn) error {
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return err
 	}
+	//if int(s.header.status) != 0 {
+	//	return errors.New(ERROR_STORAGE_SERVER_FILE_UPLOAD_RESPONSE_ERR+string(s.header.status))
+	//}
 	if s.pkgLen <= 16 {
 		return errors.New(ERROR_HEADER_RECEV_LEN_LT16_ERROR)
 	}

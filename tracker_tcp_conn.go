@@ -26,6 +26,10 @@ type trackerTcpConn struct {
 	groupInfo      GroupInfo
 	groups         []GroupInfo
 	StorageServers []StorageServer
+	// 转换append类型文件时的参数 ↓
+	//respGroupName string
+	//respIpAddr    string
+	//respPort      int64
 }
 
 // trackerStorageInfo 通过 trackerServer 获取的 storageServer 信息
@@ -67,6 +71,9 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	if err := t.receiveHeader(tcpConn); err != nil {
 		return errors.New(ERROR_HEADER_RECEV_ERROR + err.Error())
 	}
+	if int(t.header.status) != 0 {
+		return errors.New(ERROR_TRACKER_SERVER_STATUS_NOT_ZERO + string(t.header.status))
+	}
 	buf := make([]byte, t.pkgLen)
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
@@ -79,14 +86,14 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 	var ipV6Offset = 30
 	switch t.header.cmd {
 	// 后面的参数需要根据具体的命令去设置
-	case TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE:
+	case TRACKER_PROTO_CMD_SERVICE_QUERY_FETCH_ONE, TRACKER_PROTO_CMD_SERVICE_QUERY_UPDATE:
 		//@group_name：16字节字符串，组名
 		//@ip_addr：15/45字节字符串， storage server IP地址（V6.11前为15字节，V6.11开始为45字节）
 		//@port：8字节整数，storage server端口号
 		if t.pkgLen <= 39 {
 			ipV6Offset = 0
 		}
-		t.groupName = string(getBytesByPosition(buf, 0, 15))
+		t.storageInfo.groupName = string(getBytesByPosition(buf, 0, 15))
 		t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 		t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 	case TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE:

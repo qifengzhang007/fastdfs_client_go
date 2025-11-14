@@ -3,7 +3,9 @@ package fastdfs_client_go
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"net"
+	"strconv"
 )
 
 // 本页面代码功能介绍：
@@ -56,6 +58,9 @@ func (h *header) receiveHeader(tcpConn net.Conn) error {
 	} else {
 		h.respCmd = (buf[8:9])[0] // 如果通讯正常，//tracker 响应码 和 storage 响应码  都是100，常来那个
 		h.status = (buf[9:10])[0] // 响应主要关注状态码
+	}
+	if int(h.status) != 0 {
+		return errors.New(ERROR_STORAGE_SERVER_STATUS_NOT_ZERO + strconv.Itoa(int(h.status)))
 	}
 	return nil
 }

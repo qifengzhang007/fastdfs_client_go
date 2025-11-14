@@ -31,6 +31,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.0.7
 | 6 | GetGroups | 获取所有组(groups)信息 | ≥ 6.13|
 | 7 | GetGroupInfo | 获取一个特定组(group)信息 |  ≥ 6.13|
 | 8 | GetStorageServersByGroup | 获取组(group)下的所有存储节点(storage server)信息 |  ≥ 6.13|
+| 9 | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件 |  ≥ 6.13|
 
 
 
