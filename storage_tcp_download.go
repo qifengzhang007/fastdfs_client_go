@@ -60,9 +60,6 @@ func (s *storageDownloadHeaderBody) Receive(tcpConn net.Conn) error {
 	if s.header.pkgLen == 0 {
 		return errors.New(ERROR_STORAGE_SERVER_DOWN_IS_EMPTY)
 	}
-	//if int(s.header.status) != 0 {
-	//	return errors.New(ERROR_STORAGE_SERVER_DOWN_IS_EMPTY)
-	//}
 	if s.saveFileName != "" {
 		if err := s.receiveToFile(tcpConn); err != nil {
 			return errors.New(ERROR_STORAGE_SERVER_DOWN_RECEIVE + err.Error())

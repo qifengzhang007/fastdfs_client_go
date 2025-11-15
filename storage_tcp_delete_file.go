@@ -43,8 +43,5 @@ func (s *storageDeleteHeaderBody) Receive(tcpConn net.Conn) error {
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return errors.New(ERROR_DELETE_FILE_NOT_FOUNDZE + err.Error())
 	}
-	//if int(s.header.status) != 0 {
-	//	return errors.New(ERROR_DELETE_FILE_NOT_FOUNDZE)
-	//}
 	return nil
 }

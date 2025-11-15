@@ -74,8 +74,5 @@ func (s *storageServerUploadFileAppendHeaderBody) Receive(tcpConn net.Conn) erro
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return err
 	}
-	//if int(s.header.status) != 0 {
-	//	return errors.New(ERROR_STORAGE_SERVER_UPLOAD_APPENDER_FILE + strconv.Itoa(int(s.header.status)))
-	//}
 	return nil
 }

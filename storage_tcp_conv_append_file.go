@@ -44,9 +44,6 @@ func (s *storageConvAppendFileHeaderBody) Receive(tcpConn net.Conn) error {
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return errors.New(ERROR_STORAGE_SERVER_REGENERATE_APPENDER_FILENAME + err.Error())
 	}
-	//if int(s.header.status) != 0 {
-	//	return errors.New(ERROR_STORAGE_SERVER_REGENERATE_APPENDER_FILENAME + "响应状态status:" + strconv.Itoa(int(s.header.status)))
-	//}
 	buf := make([]byte, s.header.pkgLen)
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
