@@ -153,6 +153,24 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.1.0
 	 //注意：删除文件后，多次删除仍然会提示成功，不会返回错误，如果您需要严格获取删除结果,您可以先调用远程查询命令确保文件存在，然后再执行删除命令。
 	 
 ```
+#### 4.7 转换 append 文件为普通文件
+
+```code   
+    // 设置 trackerServer 配置参数
+    var conf = &fastdfs_client_go.TrackerStorageServerConfig{
+	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
+        TrackerServer: []string{"192.168.10.10:22122"},
+        // tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
+        MaxConns:      128,
+    }
+	fdfsClient, err := fastdfs_client_go.CreateFdfsClient(conf)
+	// 一个文件在服务器的完整路径为：/group1/M00/00/00/ZzOT4WkXSCqALRYbAAAAGT9wmzs044.log
+	serverAppendFileName := "group1/M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt" //注意：文件名是包含 group 名的完整路径
+	 newFileId, err := fdfsClient.ConvAppendFileToRegularFile(serverAppendFileName)
+     // 返回结果：
+     // newFileId 表示转换后的普通文件Id(本质上被重新命明，不再支持追加内容)
+	 
+```
 
 
 #### 5.1 查询 groups 信息
