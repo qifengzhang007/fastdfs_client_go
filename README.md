@@ -26,8 +26,8 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.1.0
 | 1 | UploadByFileName | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本|
 | 2 | UploadByBuffer | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID | 所有版本|
 | 3 | DownloadFileByFileId | 根据文件ID下载文件 | 所有版本|
-| 5 | GetRemoteFileInfo | 根据文件ID获取文件信息 |     所有版本|
-| 4 | DeleteFile | 根据文件ID删除文件 | 所有版本|
+| 4 | GetRemoteFileInfo | 根据文件ID获取文件信息 |     所有版本|
+| 5 | DeleteFile | 根据文件ID删除文件 | 所有版本|
 | 6 | GetGroups | 获取所有组(groups)信息 | ≥ 6.13|
 | 7 | GetGroupInfo | 获取一个特定组(group)信息 |  ≥ 6.13|
 | 8 | GetStorageServersByGroup | 获取组(group)下的所有存储节点(storage server)信息 |  ≥ 6.13|
