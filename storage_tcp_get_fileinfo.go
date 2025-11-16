@@ -56,9 +56,17 @@ func (s *storageGetFileInfoHeaderBody) Receive(tcpConn net.Conn) error {
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
 	}
+	//fmt.Println("header-cmd:", s.header.cmd)
+	//fmt.Println("header-respCmd:", s.header.respCmd)
+	//fmt.Println("header-len:", s.pkgLen)
+
 	s.fileSize = bytesToInt(getBytesByPosition(buf, 0, 8))
 	s.createTimestamp = bytesToInt(getBytesByPosition(buf, 8, 8))
 	s.crc32 = bytesToInt(getBytesByPosition(buf, 16, 8))
-	s.SourceIpAddr = string(getBytesByPosition(buf, 24, 16))
+	var ipV6Offset = 30
+	if s.pkgLen == 40 {
+		ipV6Offset = 0
+	}
+	s.SourceIpAddr = string(getBytesByPosition(buf, 24, 16+ipV6Offset))
 	return nil
 }
