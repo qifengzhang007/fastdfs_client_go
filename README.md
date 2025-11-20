@@ -2,8 +2,8 @@
 
 ### 1.概述
 
-- `FastDFS` 采用二进制 `TCP` 通信协议.  
-- 开发本包的重点与核心主要是实现二进制通讯协议.  
+- `FastDFS` 采用二进制 `TCP` 通信协议.
+- 开发本包的重点与核心主要是实现二进制通讯协议.
 - [点击了解 fastdfs 分布式文件存储系统](https://github.com/happyfish100/fastdfs) .
 
 ### 2.FastDFS二进制通讯协议细节
@@ -21,24 +21,25 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 
 ### 4. 已封装的函数列表
 
-| 序号 | 函数 | 功能 | 适用版本说明|IP协议支持|
-|-----|-----|-----|----|----|
-| 1 | UploadByFileName | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本|IPV4✅️,IPV6✅️|
-| 2 | UploadByBuffer | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID | 所有版本|IPV4✅️,IPV6✅️|
-| 3 | DownloadFileByFileId | 根据文件ID下载文件 | 所有版本|IPV4✅️,IPV6✅️|
-| 4 | GetRemoteFileInfo | 根据文件ID获取文件信息 |     所有版本|IPV4✅️,IPV6✅️|
-| 5 | DeleteFile | 根据文件ID删除文件 | 所有版本|IPV4✅️,IPV6✅️|
-| 6 | GetGroups | 获取所有组(groups)信息 | ≥ 6.13|IPV4✅️,IPV6✅️|
-| 7 | GetGroupInfo | 获取一个特定组(group)信息 |  ≥ 6.13|IPV4✅️,IPV6✅️|
-| 8 | GetStorageServersByGroup | 获取组(group)下的所有存储节点(storage server)信息 |  ≥ 6.13|IPV4✅️,IPV6✅️|
-| 9 | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件 |  ≥ 6.13|IPV4✅️,IPV6✅️|
-
-
-
+| 序号 | 函数                          | 功能                                           | 适用版本说明 | IP协议支持        |
+|----|-----------------------------|----------------------------------------------|--------|---------------|
+| 1  | UploadByFileName            | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本   | IPV4✅️,IPV6✅️ |
+| 2  | UploadByBuffer              | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID      | 所有版本   | IPV4✅️,IPV6✅️ |
+| 3  | DownloadFileByFileId        | 根据文件ID下载文件                                   | 所有版本   | IPV4✅️,IPV6✅️ |
+| 4  | GetRemoteFileInfo           | 根据文件ID获取文件信息                                 | 所有版本   | IPV4✅️,IPV6✅️ |
+| 5  | DeleteFile                  | 根据文件ID删除文件                                   | 所有版本   | IPV4✅️,IPV6✅️ |
+| 6  | GetGroups                   | 获取所有组(groups)信息                              | ≥ 6.13 | IPV4✅️,IPV6✅️ |
+| 7  | GetGroupInfo                | 获取一个特定组(group)信息                             | ≥ 6.13 | IPV4✅️,IPV6✅️ |
+| 8  | GetStorageServersByGroup    | 获取组(group)下的所有存储节点(storage server)信息         | ≥ 6.13 | IPV4✅️,IPV6✅️ |
+| 9  | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件                           | ≥ 6.13 | IPV4✅️,IPV6✅️ |
 
 #### 4.1 上传文件(指定文件名)
 
 ```code  
+    // 关于IPV6使用说明：
+    // IPV4地址格式： 192.168.10.10:22122，
+    // IPV6地址示例： [2402::xxxx:c032:xxxx:xxxx:xxxx:d44e:0]:22122 ，注意： 在云服务器商控制面板开通互联网可访问的IPV6地址才行。
+
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	    // 替换为自己的 storagerServer ip 和端口即可，保证在开发阶段外网可访问
@@ -74,9 +75,9 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 
 ```
 
-
 #### 4.3 上传append文件 - 基于已有append文件二次(多次)上传追加文件
- -  调用本函数时，需要传递一个在服务端已存在的 append 类型的文件名, 例如：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log, 该append文件可以通过 4.1、4.2 文件上传函数上传得到.  
+
+- 调用本函数时，需要传递一个在服务端已存在的 append 类型的文件名, 例如：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log, 该append文件可以通过 4.1、4.2 文件上传函数上传得到.
 
 ```code
     // 设置 trackerServer 配置参数
@@ -153,6 +154,7 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 	 //注意：删除文件后，多次删除仍然会提示成功，不会返回错误，如果您需要严格获取删除结果,您可以先调用远程查询命令确保文件存在，然后再执行删除命令。
 	 
 ```
+
 #### 4.7 转换 append 文件为普通文件
 
 ```code   
@@ -172,9 +174,10 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 	 
 ```
 
-
 #### 5.1 查询 groups 信息
-- 服务器存储文件首先是按照 group 组织的，每个 group 下可以有多个 storage server 节点.  
+
+- 服务器存储文件首先是按照 group 组织的，每个 group 下可以有多个 storage server 节点.
+
 ```code
     // 设置 trackerServer 配置参数
     var conf = &fastdfs_client_go.TrackerStorageServerConfig{
@@ -191,7 +194,6 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 
 
 ```
-
 
 #### 5.2 查询 group 信息
 
@@ -211,7 +213,6 @@ groupInfo, err := fdfsClient.GetGroupInfo(groupName);
 //  groupInfo 表示返回的组基本信息结构体
 
 ```
-
 
 #### 5.3 查询 group 下的所有 storage server 信息
 
@@ -233,12 +234,14 @@ groupInfo, err := fdfsClient.GetGroupInfo(groupName);
 
 ```
 
-####  以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)  
+#### 以上命令的使用示例，[点击查看单元测试详情](./test/fdfscClient_test.go)
 
+#### 5.最后一些说明
 
-#### 5.最后一些说明  
-- 5.1 `fastdfs` 分布式文件系统应该部署在内网环境,  整个系统原则上是不对互联网直接开放访问权限的（除了开发调试之外）.    
-- 5.2 基于以上原因，开发者可以将用户上传的文件，首先暂停在临时目录，然后调用本客户端将临时目录的文件上传到 `fastdfs` 文件系统, 获取可访问的`文件id(fileId)(格式：group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav)`，最终返回给用户访问地址(建议通过nginx代理访问资源)  
+- 5.1 `fastdfs` 分布式文件系统应该部署在内网环境, 整个系统原则上是不对互联网直接开放访问权限的（除了开发调试之外）.
+- 5.2 基于以上原因，开发者可以将用户上传的文件，首先暂停在临时目录，然后调用本客户端将临时目录的文件上传到 `fastdfs` 文件系统, 获取可访问的
+  `文件id(fileId)(格式：group1/M00/00/01/MeiRdmISDUiAaURaAsRMrFnLJoE317.wav)`，最终返回给用户访问地址(建议通过nginx代理访问资源)
 
 #### 使用中遇到问题需要讨论
+
 - QQ群：129885228 
