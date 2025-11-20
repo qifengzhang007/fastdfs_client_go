@@ -2,9 +2,25 @@ package fastdfs_client_go
 
 import (
 	"errors"
+	"net"
 	"strconv"
+	"strings"
 	"sync"
 )
+
+// formatAddrPort 格式化IP地址和端口号，正确处理IPV6地址
+func formatAddrPort(ipAddr string, port int64) string {
+	// 如果IP地址包含冒号（可能是IPV6地址），并且没有被方括号括起来
+	if strings.Contains(ipAddr, ":") && !strings.HasPrefix(ipAddr, "[") {
+		// 检查是否是有效的IPV6地址
+		if ip := net.ParseIP(ipAddr); ip != nil && ip.To4() == nil {
+			// 是有效的IPV6地址，用方括号括起来
+			return "[" + ipAddr + "]:" + strconv.FormatInt(port, 10)
+		}
+	}
+	// 对于IPV4地址或已经正确格式化的IPV6地址，直接拼接
+	return ipAddr + ":" + strconv.FormatInt(port, 10)
+}
 
 func CreateFdfsClient(trackerServerOptions *TrackerStorageServerConfig) (*trackerServerTcpClient, error) {
 
@@ -89,8 +105,11 @@ func (c *trackerServerTcpClient) getStorageInfoByTracker(cmd byte, groupName str
 	if err := c.sendHeaderByTrackerServer(trackerSendParams); err != nil {
 		return nil, err
 	}
+
+	// 修复IPV6地址拼接问题
+	addrPort := formatAddrPort(trackerSendParams.storageInfo.ipAddr, trackerSendParams.storageInfo.port)
 	return &storageServerInfo{
-		addrPort:         trackerSendParams.storageInfo.ipAddr + ":" + strconv.FormatInt(trackerSendParams.storageInfo.port, 10),
+		addrPort:         addrPort,
 		storagePathIndex: trackerSendParams.storageInfo.storePathIndex,
 	}, nil
 }

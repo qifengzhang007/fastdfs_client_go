@@ -52,7 +52,7 @@ func (s *storageGetFileInfoHeaderBody) Receive(tcpConn net.Conn) error {
 	if err := s.header.receiveHeader(tcpConn); err != nil {
 		return errors.New(ERROR_STORAGE_SERVER_GET_FILEINFO + err.Error())
 	}
-	buf := make([]byte, 40)
+	buf := make([]byte, s.pkgLen)
 	if _, err := tcpConn.Read(buf); err != nil {
 		return err
 	}

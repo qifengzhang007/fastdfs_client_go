@@ -14,7 +14,8 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 2. trackerServer 服务器会返回storage_server 服务器地址： xx.xx.xx.xx: 23000，
 	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
-	TrackerServer: []string{"192.168.10.10:22122"}, //  IPV4地址：192.168.10.10:22122，IPV6示例： [fe80::32df:b8ff:fe00:2b]:22122 ，注意： 在云服务器商控制面板开通互联网可访问的IPV6地址才行。
+	// 5.IPV4地址：192.168.10.10:22122，IPV6示例： [2402::xxxx:c032:xxxx:xxxx:xxxx:d44e:0]:22122 ，注意： 在云服务器商控制面板开通互联网可访问的IPV6地址才行。
+	TrackerServer: []string{"[2402:4e00:c032:6200:7e08:110a:d44e:0]:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
 	MaxConns: 128,
 }
