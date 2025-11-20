@@ -203,6 +203,7 @@ func GetAccessToken(fileID, secretKey string, timestamp int64) (string, int64, e
 		return "", 0, fmt.Errorf(ERROR_TOKEN_TOO_LONG)
 	}
 
+	// FastDFS官方标准的token生成算法：fileID + secretKey + timestamp
 	src := fileID + secretKey + tsStr
 
 	hash := md5.Sum([]byte(src))
