@@ -20,18 +20,19 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 ```
 
 ### 4. 已封装的函数列表
+>  全面支持 IPV4✅️ + IPV6 ✅️ 协议
 
-| 序号 | 函数                          | 功能                                           | 适用版本说明 | IP协议支持        |
-|----|-----------------------------|----------------------------------------------|--------|---------------|
-| 1  | UploadByFileName            | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本   | IPV4✅️,IPV6✅️ |
-| 2  | UploadByBuffer              | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID      | 所有版本   | IPV4✅️,IPV6✅️ |
-| 3  | DownloadFileByFileId        | 根据文件ID下载文件                                   | 所有版本   | IPV4✅️,IPV6✅️ |
-| 4  | GetRemoteFileInfo           | 根据文件ID获取文件信息                                 | 所有版本   | IPV4✅️,IPV6✅️ |
-| 5  | DeleteFile                  | 根据文件ID删除文件                                   | 所有版本   | IPV4✅️,IPV6✅️ |
-| 6  | GetGroups                   | 获取所有组(groups)信息                              | ≥ 6.13 | IPV4✅️,IPV6✅️ |
-| 7  | GetGroupInfo                | 获取一个特定组(group)信息                             | ≥ 6.13 | IPV4✅️,IPV6✅️ |
-| 8  | GetStorageServersByGroup    | 获取组(group)下的所有存储节点(storage server)信息         | ≥ 6.13 | IPV4✅️,IPV6✅️ |
-| 9  | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件                           | ≥ 6.13 | IPV4✅️,IPV6✅️ |
+| 序号 | 函数                          | 功能                                           | 适用版本说明        |
+|----|-----------------------------|----------------------------------------------|--------|
+| 1  | UploadByFileName            | 上传文件，生成普通文件ID或者append文件ID，append类型文件后续支持追加内容 | 所有版本   
+| 2  | UploadByBuffer              | 传递字节集（[]byte） 上传文件，生成普通文件ID或者append文件ID      | 所有版本   | 
+| 3  | DownloadFileByFileId        | 根据文件ID下载文件                                   | 所有版本   |
+| 4  | GetRemoteFileInfo           | 根据文件ID获取文件信息                                 | 所有版本   | 
+| 5  | DeleteFile                  | 根据文件ID删除文件                                   | 所有版本   | 
+| 6  | GetGroups                   | 获取所有组(groups)信息                              | ≥ 6.13 | 
+| 7  | GetGroupInfo                | 获取一个特定组(group)信息                             | ≥ 6.13 |
+| 8  | GetStorageServersByGroup    | 获取组(group)下的所有存储节点(storage server)信息         | ≥ 6.13 |
+| 9  | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件                           | ≥ 6.13 | 
 
 #### 4.1 上传文件(指定文件名)
 
