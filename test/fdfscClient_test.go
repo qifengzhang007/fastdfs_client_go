@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/qifengzhang007/fastdfs_client_go"
 )
@@ -224,5 +225,18 @@ func TestConvAppendFileToRegularFile(t *testing.T) {
 		t.Error("单元测试失败，转换append类型的文件为普通文件出错：" + err.Error())
 	} else {
 		t.Logf("单元测试完成，转换append类型的文件为普通文件完成，新文件ID：%s", newFileId)
+	}
+}
+
+// 生成fastdfs 资源访问token
+func TestGetAccessToken(t *testing.T) {
+	fileId := "M00/00/00/ZzOT4WkXZpqAB17hAAAAb8KVDIE745.txt"
+	timestamp := time.Now().Unix()
+	secretKey := "FastDFS2025AccessKey" //默认配置路径  /etc/fdfs/http.conf -  http.anti_steal.secret_key  =  设置加密key ，长度不要超过128字节
+	token, ts, err := fastdfs_client_go.GetAccessToken(fileId, secretKey, timestamp)
+	if err != nil {
+		t.Error("单元测试失败，生成token出错：" + err.Error())
+	} else {
+		t.Logf("单元测试完成，生成token：%s, timestamp：%d, err：%v", token, ts, err)
 	}
 }

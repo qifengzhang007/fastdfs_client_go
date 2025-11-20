@@ -107,4 +107,5 @@ const (
 	ERROR_GET_GROUP_INFO_FAILED_GROUP_NOT_EMPTY       = "查询group信息失败，组名不能为空"
 	ERROR_STORAGE_SERVER_UPLOAD_APPENDER_FILE         = "storage server 上传append文件时出错, 响应状态status: "
 	ERROR_STORAGE_SERVER_REGENERATE_APPENDER_FILENAME = "storage server 转换append类型的文件为普通文件时出错, "
+	ERROR_TOKEN_TOO_LONG                              = "生成的token长度超过320字节"
 )

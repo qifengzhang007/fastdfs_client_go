@@ -3,8 +3,11 @@ package fastdfs_client_go
 import (
 	"bufio"
 	"bytes"
+	"crypto/md5"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"os"
@@ -176,4 +179,32 @@ func splitStorageServerFileId(fileId string) (string, string, error) {
 		return "", "", errors.New(ERROR_STORAGE_SERVER_FILE_NAME_FORMAT2)
 	}
 	return str[0], str[1], nil
+}
+
+// GetAccessToken  获取访问fastdfs 资源时所需要的token
+// 只有fastdfs服务器端开启了资源鉴权，才需要携带token访问
+// @fileID fastdfs 存储的文件id，示例：M00/00/00/wKgZhFyf392AeC33AAG3h33333333 ，不包括 group
+// @secretKey  服务器端配置的密钥
+// @timestamp  时间戳，单位秒，为0时表示当前时间
+func GetAccessToken(fileID, secretKey string, timestamp int64) (string, int64, error) {
+	var ts int64
+	if timestamp == 0 {
+		ts = time.Now().Unix()
+	} else {
+		ts = timestamp
+	}
+
+	// 将时间戳转换为字符串
+	tsStr := fmt.Sprintf("%d", ts)
+	// 计算总长度
+	totalLen := len(fileID) + len(secretKey) + len(tsStr)
+	// 与fastdfs C语言代码中的缓冲区大小一致，确保最大长度不能超过320字节
+	if totalLen > 320 {
+		return "", 0, fmt.Errorf(ERROR_TOKEN_TOO_LONG)
+	}
+
+	src := fileID + secretKey + tsStr
+
+	hash := md5.Sum([]byte(src))
+	return hex.EncodeToString(hash[:]), ts, nil
 }
