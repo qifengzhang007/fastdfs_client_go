@@ -238,6 +238,18 @@ func TestGetAccessToken(t *testing.T) {
 	// /etc/fdfs/mod_fastdfs.conf ->
 	// > group_name = group1
 	// >url_have_group_name = true
+
+	// 闭坑指南 - 服务器时区与客户端时区不一致时，会导致token验证失败
+	//# 设置时区为北京时间
+	//timedatectl set-timezone Asia/Shanghai
+	//echo "Asia/Shanghai" > /etc/timezone
+	//
+	//# 验证
+	//echo "当前时区: $(date +%Z)"
+	//当前时区: CST  // 注意： 时区为 CST ，表示东八区时间
+	//timedatectl status | grep "Time zone"
+	//Time zone: Asia/Shanghai (CST, +0800)
+
 	secretKey := "your_secret_key" // 设置加密key
 	var timestamp int64 = time.Now().Unix()
 	token, ts, err := fastdfs_client_go.GetAccessToken(fileId, secretKey, timestamp)
