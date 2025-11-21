@@ -230,8 +230,6 @@ func TestConvAppendFileToRegularFile(t *testing.T) {
 
 // 生成fastdfs 资源访问token
 func TestGetAccessToken(t *testing.T) {
-	// 注意：token生成时应该使用不包含 group 的文件ID
-	fileId := "M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
 	//有关token设置的配置文件路径：
 	// /etc/fdfs/http.conf ->
 	//   > http.anti_steal.secret_key  =  设置加密key ，长度不要超过128字节
@@ -249,7 +247,8 @@ func TestGetAccessToken(t *testing.T) {
 	//当前时区: CST  // 注意： 时区为 CST ，表示东八区时间
 	//timedatectl status | grep "Time zone"
 	//Time zone: Asia/Shanghai (CST, +0800)
-
+	// 注意：token生成时应该使用不包含 group 的文件ID
+	fileId := "M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
 	secretKey := "your_secret_key" // 设置加密key
 	var timestamp int64 = time.Now().Unix()
 	token, ts, err := fastdfs_client_go.GetAccessToken(fileId, secretKey, timestamp)

@@ -175,6 +175,19 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.0
 	 
 ```
 
+#### 4.8 资源访问鉴权(校验token)
+
+```code   
+	// 注意：token生成时应该使用不包含 group 的文件ID
+	fileId := "M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
+	secretKey := "your_secret_key" // 设置加密key，详情参见本文档底部的单元测试示例
+	var timestamp int64 = time.Now().Unix()
+	token, ts, err := fastdfs_client_go.GetAccessToken(fileId, secretKey, timestamp)
+	// 根据 token+ts 构建完整URL：
+	// http://xxx.xxx.xxx.xxx:22007/group1/M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt?token=52b11b0031287684146c1159c4d28b55&ts=1763706353
+	
+```
+
 #### 5.1 查询 groups 信息
 
 - 服务器存储文件首先是按照 group 组织的，每个 group 下可以有多个 storage server 节点.
