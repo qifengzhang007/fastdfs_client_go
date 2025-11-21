@@ -230,16 +230,22 @@ func TestConvAppendFileToRegularFile(t *testing.T) {
 
 // 生成fastdfs 资源访问token
 func TestGetAccessToken(t *testing.T) {
-	// 注意：token生成时应该使用不包含group的文件ID
+	// 注意：token生成时应该使用不包含 group 的文件ID
 	fileId := "M00/00/00/ZzOT4WkW2XGAQOgAAAAAUjEe6oc012.txt"
-	secretKey := "FastDFS2025AccessKey" //默认配置路径  /etc/fdfs/http.conf -  http.anti_steal.secret_key  =  设置加密key ，长度不要超过128字节
-	timestamp := time.Now().Unix()
+	//有关token设置的配置文件路径：
+	// /etc/fdfs/http.conf ->
+	//   > http.anti_steal.secret_key  =  设置加密key ，长度不要超过128字节
+	// /etc/fdfs/mod_fastdfs.conf ->
+	// > group_name = group1
+	// >url_have_group_name = true
+	secretKey := "your_secret_key" // 设置加密key
+	var timestamp int64 = time.Now().Unix()
 	token, ts, err := fastdfs_client_go.GetAccessToken(fileId, secretKey, timestamp)
 	if err != nil {
 		t.Error("单元测试失败，生成token出错：" + err.Error())
 	} else {
 		t.Logf("单元测试完成，生成token：%s, timestamp：%d, err：%v", token, ts, err)
 		// 输出完整的访问URL示例
-		t.Logf("完整访问URL示例：http://103.51.147.225:22007/group1/%s?token=%s&ts=%d", fileId, token, ts)
+		t.Logf("完整访问URL示例：http://103.xxx.xxx.xxx:端口/group1/%s?token=%s&ts=%d", fileId, token, ts)
 	}
 }
