@@ -220,7 +220,7 @@ func TestConvAppendFileToRegularFile(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/ZzOT4WkXSCqALRYbAAAAGT9wmzs044.log
-	serverAppendFileName := "group1/M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "group1/M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt"
 	if newFileId, err := fdfsClient.ConvAppendFileToRegularFile(serverAppendFileName); err != nil {
 		t.Error("单元测试失败，转换append类型的文件为普通文件出错：" + err.Error())
 	} else {
