@@ -34,8 +34,8 @@ go  get  github.com/qifengzhang007/fastdfs_client_go@v1.2.1
 | 7  | GetGroups                   | 获取所有组(groups)信息                              | ≥ 6.13 | 
 | 8  | GetGroupInfo                | 获取一个特定组(group)信息                             | ≥ 6.13 |
 | 9  | GetStorageServersByGroup    | 获取组(group)下的所有存储节点(storage server)信息         | ≥ 6.13 |
-| 10  | UploadAppendFileByFileName    | 上传append类型文件，通过文件名，生成append文件ID      | 所有版本   | 
-| 11  | UploadAppendFileByBuffer    | 上传append类型文件，传递字节集（[]byte） 上传文件，生成append文件ID      | 所有版本   | 
+| 10  | UploadAppendFileByFileName    | 指定本地文件名追加(上传)内容到服务端已有的append类型文件     | 所有版本   | 
+| 11  | UploadAppendFileByBuffer    | 传递字节集追加(上传)内容到服务端已有的append类型文件      | 所有版本   | 
 | 12 | ConvAppendFileToRegularFile | 将append类型文件转换为普通文件                           | 所有版本 | 
 
 
