@@ -1,8 +1,1 @@
-./.idea
-./.idea/
-.idea/.gitignore
-.idea/fastdfs_client_go.iml
-.idea/MarsCodeWorkspaceAppSettings.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/inspectionProfiles/Project_Default.xml
+.idea/
