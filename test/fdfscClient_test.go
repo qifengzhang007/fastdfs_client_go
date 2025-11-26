@@ -16,7 +16,7 @@ var conf = &fastdfs_client_go.TrackerStorageServerConfig{
 	// 3.因此如果是外网测试，请保证 trackerServer 服务器和 storage_server 服务器的ip、端口都能访问到
 	// 4.上线部署以后，请使用内网ip、端口，保证安全
 	// 5.IPV4地址：192.168.10.10:22122，IPV6示例： [2402::xxxx:c032:xxxx:xxxx:xxxx:d44e:0]:22122 ，注意： 在云服务器商控制面板开通互联网可访问的IPV6地址才行。
-	TrackerServer: []string{"[2402::xxxx:c032:xxxx:xxxx:xxxx:d44e:0]:22122"},
+	TrackerServer: []string{"192.168.10.10:22122"},
 	// tcp 连接池最大允许的连接数（trackerServer 和 storageServer 连接池共用该参数）
 	MaxConns: 128,
 }
@@ -113,7 +113,7 @@ func TestQueryRemoteFileInfo(t *testing.T) {
 	}
 	defer fdfsClient.Destroy()
 	// 通过指定 文件id(fileId) 查询远程文件信息
-	fileId := "group1/M00/00/00/ZzOT4WkXR6uAODW7AAAAN7EZJzQ965.txt"
+	fileId := "group1/M00/00/00/rBAAC2kmY52AWrLZAAAAGZr7CzU848.txt"
 	if remoteFileInfo, err := fdfsClient.GetRemoteFileInfo(fileId); err != nil {
 		t.Error("单元测试失败，查询远程文件信息出错：" + err.Error())
 	} else {
@@ -182,7 +182,7 @@ func TestUploadAppendFileByFileName(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "M00/00/00/rBAAC2kmZIWELbf_AAAAACp641g314.txt" // 删除group名以后的 append文件名
 	localFileName := "E:/tmp/20251114-001.txt"                             // 客户端文件名
 	if err = fdfsClient.UploadAppendFileByFileName(serverAppendFileName, localFileName); err != nil {
 		t.Error("单元测试失败，上传append文件出错：" + err.Error())
@@ -201,7 +201,7 @@ func TestUploadAppendFileByBuffer(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/cnQ3KGkTXAKAZWCPAbnLqPIYSzQ544.log
-	serverAppendFileName := "M00/00/00/ZzOT4WkXZpqAB17hAAAAb8KVDIE745.txt" // 删除group名以后的 append文件名
+	serverAppendFileName := "M00/00/00/rBAAC2kmZIWELbf_AAAAACp641g314.txt" // 删除group名以后的 append文件名
 	buffer := []byte("\r\nappend - 上传字节集 - 追加的内容-222")
 	if err = fdfsClient.UploadAppendFileByBuffer(serverAppendFileName, buffer); err != nil {
 		t.Error("单元测试失败，上传append-字节集文件出错：" + err.Error())
@@ -220,7 +220,7 @@ func TestConvAppendFileToRegularFile(t *testing.T) {
 	defer fdfsClient.Destroy()
 
 	// 一个文件在服务器的完整路径为：/group1/M00/00/00/ZzOT4WkXSCqALRYbAAAAGT9wmzs044.log
-	serverAppendFileName := "group1/M00/00/00/ZzOT4WkXZg2ETKwCAAAAAG7DoII745.txt"
+	serverAppendFileName := "group1/M00/00/00/oYYBAGkmZq2ENaciAAAAACp641g932.txt"
 	if newFileId, err := fdfsClient.ConvAppendFileToRegularFile(serverAppendFileName); err != nil {
 		t.Error("单元测试失败，转换append类型的文件为普通文件出错：" + err.Error())
 	} else {
