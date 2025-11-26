@@ -93,7 +93,7 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 		if t.pkgLen <= 39 {
 			ipV6Offset = 0
 		}
-		t.storageInfo.groupName = string(getBytesByPosition(buf, 0, 15))
+		t.storageInfo.groupName = string(getBytesByPosition(buf, 0, 16))
 		t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 		t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 	case TRACKER_PROTO_CMD_SERVICE_QUERY_STORE_WITHOUT_GROUP_ONE:
@@ -106,7 +106,7 @@ func (t *trackerTcpConn) Receive(tcpConn net.Conn) error {
 		if t.pkgLen <= 40 {
 			ipV6Offset = 0
 		}
-		t.groupName = string(getBytesByPosition(buf, 0, 15))
+		t.groupName = string(getBytesByPosition(buf, 0, 16))
 		t.storageInfo.ipAddr = string(getBytesByPosition(buf, 16, 15+ipV6Offset))
 		t.storageInfo.port = bytesToInt(getBytesByPosition(buf, 31+ipV6Offset, 8))
 		t.storageInfo.storePathIndex = getBytesByPosition(buf, 39+ipV6Offset, 1)[0]

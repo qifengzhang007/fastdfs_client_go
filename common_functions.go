@@ -35,11 +35,12 @@ func bytesToInt(bys []byte) int64 {
 	return x
 }
 
-// getBytesByPosition  截取指定长度的字节切片
+// getBytesByPosition  截取指定长度的字节切片(包含开始位置截取几个字节)
 // @bys 原始字节切片
 // @start 开始位置，包括开始位置的字节
 // @num 截取的字节数目的截止位置，不包括截止位置的字节
 // @ return 返回截取的字节切片
+// 使用示例： var params=[]byte(helloworld )，getBytesByPosition(params, 0, 5)==> hello， getBytesByPosition(params, 5, 5)==> world
 func getBytesByPosition(bys []byte, start, num int) []byte {
 	var newBytes = bys[start:]
 	endPosition := bytes.IndexByte(newBytes, 0x0)
