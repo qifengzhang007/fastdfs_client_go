@@ -90,13 +90,14 @@ func (t *tcpConnPool) checkTcpConnPool() (err error) {
 		if conn, isOk = tcpConn.Value.(*tcpConnBaseInfo); isOk {
 			// 1.首先检查休眠状态超时的 tcp 连接，直接从连接池删除
 			if conn.status == TCP_STATUS_INTERRUPTIBLE && time.Now().Sub(conn.putTime).Seconds() > TCP_CONN_IDLE_TIMEOUT {
-				_ = conn.Close()
 				t.conns.Remove(tcpConn)
+				_ = conn.Close()
 				t.count--
 			}
 			// 2.其次，检查没有超时，但是不可用的连接，从连接池删除
 			if isOk, err = t.CheckSpecialTcpConnIsActive(conn); !isOk {
 				t.conns.Remove(tcpConn)
+				_ = conn.Close()
 				t.count--
 			}
 		}
@@ -177,6 +178,8 @@ func (t *tcpConnPool) get() (tcpConn *tcpConnBaseInfo, err error) {
 				return okTcp, nil
 			} else {
 				t.conns.Remove(conn)
+				_ = okTcp.Close()
+				t.count--
 				continue
 			}
 		} else {
