@@ -120,10 +120,6 @@ func (t *tcpConnPool) CheckSpecialTcpConnIsActive(tcpConn *tcpConnBaseInfo) (boo
 	if err1 == nil && err2 == nil && tmpHeader.status == 0 {
 		return true, nil
 	} else {
-		if tmpHeader.status != 0 {
-			err3 := ERROR_TCP_SERVER_RESPONSE_NOT_ZERO
-			return false, errors.New(err1.Error() + err2.Error() + err3)
-		}
 		// 这里的错误可能发生在发生时、接受时其中一个或者两处全部都出错
 		var tempErr string
 		if err1 != nil {
@@ -131,6 +127,10 @@ func (t *tcpConnPool) CheckSpecialTcpConnIsActive(tcpConn *tcpConnBaseInfo) (boo
 		}
 		if err2 != nil {
 			tempErr += err2.Error()
+		}
+		if tmpHeader.status != 0 {
+			err3 := ERROR_TCP_SERVER_RESPONSE_NOT_ZERO
+			tempErr += err3
 		}
 		return false, errors.New(tempErr)
 	}
