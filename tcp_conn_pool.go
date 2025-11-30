@@ -93,6 +93,7 @@ func (t *tcpConnPool) checkTcpConnPool() (err error) {
 				t.conns.Remove(tcpConn)
 				_ = conn.Close()
 				t.count--
+				continue
 			}
 			// 2.其次，检查没有超时，但是不可用的连接，从连接池删除
 			if isOk, err = t.CheckSpecialTcpConnIsActive(conn); !isOk {
